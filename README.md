@@ -70,7 +70,7 @@
 * Create `base.html` in `core/templates/`. Link the Bootstrap 5.3 CSS and JS via CDN. Define standard blocks (`{% block content %}`, `{% block scripts %}`).
 * **Responsive Navigation:** Implement two distinct navigation bars in `base.html`:
     * **Desktop Header:** A standard Bootstrap navbar (`<nav class="navbar ... d-none d-md-block">`) with text links (Archives, Insights, Books, Notifications Bell, User Menu, AI Service).
-    * **Mobile Footer:** A fixed-bottom navbar (`<nav class="... d-md-none">`) with icons for key sections. Include a placeholder link/modal trigger for "Academy (Coming Soon)".
+    * **Mobile:** A fixed-bottom navbar (`<nav class="... d-md-none">`) with icons for key sections. Include a placeholder link/modal trigger for "Academy (Coming Soon)" like on mobile the app should feel like a mobile app, the default is archives there should be insights, books, Academy, AI like the core sections of the platform, others should be under profile icon drop down at top right.
 * **Conditional Sub-Navigation:** Design a placeholder area (e.g., a specific `div`) where context-specific sub-navigation (like archive filters) can be loaded dynamically or included via template inheritance.
 * **Mobile Back Button:** Add a simple JS-powered back button (`<button onclick="history.back()">Back</button>`) styled appropriately and displayed only on mobile views (`d-md-none`).
 * **Night Mode Toggle:** Implement a JS toggle button that adds/removes a `dark-mode` class on the `<body>` and stores the preference in `localStorage`. Define basic dark mode styles in your CSS.
