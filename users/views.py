@@ -18,8 +18,8 @@ def profile_view(request, username):
     
     user = get_object_or_404(User, username=username)
     
-    archives = Archive.objects.filter(uploaded_by=user).order_by('-uploaded_at')
-    insights = InsightPost.objects.filter(author=user, published=True).order_by('-published_date')
+    archives = Archive.objects.filter(uploaded_by=user).order_by('-created_at')
+    insights = InsightPost.objects.filter(author=user, is_published=True).order_by('-created_at')  # Changed published to is_published and published_date to created_at
     book_reviews = BookReview.objects.filter(author=user).order_by('-created_at')
     
     context = {
