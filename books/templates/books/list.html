@@ -3,22 +3,143 @@
 {% block title %}Book Reviews - Igbo Archives{% endblock %}
 
 {% block content %}
-<h2>Book Reviews</h2>
-
-<div class="filter-section">
-    <input type="text" class="search-input" placeholder="Search books...">
-    <div class="view-toggle">
-        <button class="active" onclick="toggleView('grid')">Grid View</button>
-        <button onclick="toggleView('list')">List View</button>
-    </div>
-</div>
-
-<div class="archive-container archive-grid">
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Book Reviews</h5>
-            <p class="card-text">Book reviews will be displayed here.</p>
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2>Book Reviews</h2>
+            <p class="text-muted">Reviews of books on Igbo culture, history, and literature</p>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'books:create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Write Review
+            </a>
         </div>
     </div>
+
+    <!-- Filters -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="filter-controls">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <select class="form-select" id="ratingFilter" onchange="applyFilters()">
+                            <option value="">All Ratings</option>
+                            <option value="5" {% if request.GET.rating == '5' %}selected{% endif %}>5 Stars</option>
+                            <option value="4" {% if request.GET.rating == '4' %}selected{% endif %}>4 Stars</option>
+                            <option value="3" {% if request.GET.rating == '3' %}selected{% endif %}>3 Stars</option>
+                            <option value="2" {% if request.GET.rating == '2' %}selected{% endif %}>2 Stars</option>
+                            <option value="1" {% if request.GET.rating == '1' %}selected{% endif %}>1 Star</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="sortFilter" onchange="applyFilters()">
+                            <option value="-created_at">Newest First</option>
+                            <option value="created_at" {% if request.GET.sort == 'created_at' %}selected{% endif %}>Oldest First</option>
+                            <option value="-rating" {% if request.GET.sort == '-rating' %}selected{% endif %}>Highest Rated</option>
+                            <option value="rating" {% if request.GET.sort == 'rating' %}selected{% endif %}>Lowest Rated</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search book titles..." onkeyup="debounceSearch()" value="{{ request.GET.search }}">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reviews Grid -->
+    <div class="row row-cols-1 row-cols-md-3 g-4" id="reviewsGrid">
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="col">
+                <div class="card h-100">
+                    {% if review.cover_image %}
+                    <img src="{{ review.cover_image.url }}" class="card-img-top" alt="{{ review.book_title }}" style="height: 250px; object-fit: cover;">
+                    {% else %}
+                    <div class="bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 250px;">
+                        <i class="bi bi-book" style="font-size: 3rem;"></i>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ review.book_title }}</h5>
+                        <p class="text-muted mb-2"><small>by {{ review.author }}</small></p>
+                        <div class="rating mb-2">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="bi bi-star-fill text-warning"></i>
+                                {% else %}
+                                    <i class="bi bi-star text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <h6 class="mb-2">{{ review.review_title }}</h6>
+                        <p class="card-text"><small class="text-muted">Reviewed by {{ review.reviewer.get_full_name|default:review.reviewer.username }}</small></p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{% url 'books:detail' review.slug %}" class="btn btn-sm btn-primary">Read Review</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            <!-- Pagination -->
+            {% if reviews.has_other_pages %}
+            <div class="col-12 mt-4">
+                <nav>
+                    <ul class="pagination justify-content-center">
+                        {% if reviews.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ reviews.previous_page_number }}{% if request.GET.rating %}&rating={{ request.GET.rating }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Previous</a>
+                        </li>
+                        {% endif %}
+
+                        {% for num in reviews.paginator.page_range %}
+                            {% if reviews.number == num %}
+                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                            {% elif num > reviews.number|add:'-3' and num < reviews.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ num }}{% if request.GET.rating %}&rating={{ request.GET.rating }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+                            </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if reviews.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ reviews.next_page_number }}{% if request.GET.rating %}&rating={{ request.GET.rating }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No book reviews yet. <a href="{% url 'books:create' %}">Be the first to write one!</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
 </div>
+
+<script>
+let searchTimeout;
+function debounceSearch() {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(applyFilters, 500);
+}
+
+function applyFilters() {
+    const search = document.getElementById('searchInput').value;
+    const rating = document.getElementById('ratingFilter').value;
+    const sort = document.getElementById('sortFilter').value;
+    
+    let url = '{% url "books:list" %}?';
+    if (search) url += `search=${search}&`;
+    if (rating) url += `rating=${rating}&`;
+    if (sort) url += `sort=${sort}`;
+    
+    window.location.href = url;
+}
+</script>
 {% endblock %}

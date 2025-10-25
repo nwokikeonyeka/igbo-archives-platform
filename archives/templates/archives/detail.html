@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load django_comments %}
+{% load threadedcomments_tags %}
+
+{% block title %}{{ archive.title }} - Archives{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <article class="archive-detail">
+                <h1 class="mb-3">{{ archive.title }}</h1>
+                
+                <div class="archive-meta mb-3">
+                    <span class="badge bg-secondary">{{ archive.get_archive_type_display }}</span>
+                    {% if archive.category %}
+                    <span class="badge bg-primary">{{ archive.category.name }}</span>
+                    {% endif %}
+                    <small class="text-muted ms-2">
+                        <i class="bi bi-calendar"></i> Uploaded {{ archive.created_at|date:"F d, Y" }}
+                    </small>
+                </div>
+
+                <div class="archive-image mb-4">
+                    <img src="{{ archive.image.url }}" alt="{{ archive.alt_text }}" class="img-fluid rounded">
+                    <p class="text-muted mt-2"><small>{{ archive.alt_text }}</small></p>
+                </div>
+
+                <div class="archive-content mb-4">
+                    {{ archive.description|safe }}
+                </div>
+
+                <div class="archive-tags mb-4">
+                    <strong>Tags:</strong>
+                    {% for tag in archive.tags.all %}
+                    <a href="{% url 'archives:list' %}?tag={{ tag.name }}" class="badge bg-light text-dark">{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+
+                <div class="archive-actions mb-4">
+                    {% if user == archive.uploaded_by %}
+                    <a href="{% url 'archives:edit' archive.pk %}" class="btn btn-primary">
+                        <i class="bi bi-pencil"></i> Edit Archive
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'insights:create' %}?archive_id={{ archive.id }}" class="btn btn-outline-primary">
+                        <i class="bi bi-lightbulb"></i> Write Post with This
+                    </a>
+                </div>
+
+                <hr>
+
+                <!-- Comments Section -->
+                <div class="comments-section mt-5">
+                    <h3>Discussion</h3>
+                    {% render_comment_list for archive %}
+                    {% if user.is_authenticated %}
+                        {% render_comment_form for archive %}
+                    {% else %}
+                        {% include "archives/partials/guest_comment_form.html" %}
+                    {% endif %}
+                </div>
+            </article>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="sidebar">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">About This Archive</h5>
+                        {% if archive.date_created %}
+                        <p><strong>Date Created:</strong> {{ archive.date_created|date:"F d, Y" }}</p>
+                        {% endif %}
+                        <p><strong>Uploaded by:</strong> {{ archive.uploaded_by.get_full_name|default:archive.uploaded_by.username }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
