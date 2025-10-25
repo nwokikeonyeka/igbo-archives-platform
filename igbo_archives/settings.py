@@ -1,0 +1,267 @@
+"""
+Django settings for igbo_archives project.
+"""
+
+from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-#9&(g6-t9vq8fmhh@l$ipieejrsh^ubecn(advzg$_5i_=n$99')
+
+DEBUG = os.getenv('DEBUG', 'True') == 'True'
+
+ALLOWED_HOSTS = ['*']
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django.contrib.sitemaps',
+    
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    
+    'django_comments',
+    'threadedcomments',
+    'taggit',
+    'django_htmx',
+    'pwa',
+    'meta',
+    'django_recaptcha',
+    'dbbackup',
+    'push_notifications',
+    'django_ckeditor_5',
+    
+    'core.apps.CoreConfig',
+    'users.apps.UsersConfig',
+    'archives.apps.ArchivesConfig',
+    'insights.apps.InsightsConfig',
+    'books.apps.BooksConfig',
+    'ai_service.apps.AiServiceConfig',
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
+    'django_htmx.middleware.HtmxMiddleware',
+]
+
+ROOT_URLCONF = 'igbo_archives.urls'
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / 'core' / 'templates'],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
+            ],
+        },
+    },
+]
+
+WSGI_APPLICATION = 'igbo_archives.wsgi.application'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+AUTH_PASSWORD_VALIDATORS = [
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+]
+
+LANGUAGE_CODE = 'en-us'
+TIME_ZONE = 'UTC'
+USE_I18N = True
+USE_TZ = True
+
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'users.CustomUser'
+
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.getenv('GOOGLE_CLIENT_ID', ''),
+            'secret': os.getenv('GOOGLE_CLIENT_SECRET', ''),
+            'key': ''
+        },
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'}
+    }
+}
+
+PWA_APP_NAME = 'Igbo Archives'
+PWA_APP_DESCRIPTION = 'Preserving the Past, Inspiring the Future'
+PWA_APP_THEME_COLOR = '#3D2817'
+PWA_APP_BACKGROUND_COLOR = '#FFFFFF'
+PWA_APP_DISPLAY = 'standalone'
+PWA_APP_SCOPE = '/'
+PWA_APP_ORIENTATION = 'any'
+PWA_APP_START_URL = '/'
+PWA_APP_STATUS_BAR_COLOR = 'default'
+PWA_APP_ICONS = [
+    {
+        'src': '/static/images/logos/logo-light.png',
+        'sizes': '160x160'
+    }
+]
+PWA_APP_ICONS_APPLE = [
+    {
+        'src': '/static/images/logos/logo-light.png',
+        'sizes': '160x160'
+    }
+]
+PWA_APP_SPLASH_SCREEN = [
+    {
+        'src': '/static/images/logos/logo-light.png',
+        'media': '(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2)'
+    }
+]
+PWA_APP_DIR = 'ltr'
+PWA_APP_LANG = 'en-US'
+
+RECAPTCHA_PUBLIC_KEY = os.getenv('RECAPTCHA_PUBLIC_KEY', '')
+RECAPTCHA_PRIVATE_KEY = os.getenv('RECAPTCHA_PRIVATE_KEY', '')
+
+PUSH_NOTIFICATIONS_SETTINGS = {
+    "FCM_API_KEY": os.getenv('FCM_SERVER_KEY', ''),
+    "WP_PRIVATE_KEY": os.getenv('WEBPUSH_PRIVATE_KEY', ''),
+    "WP_CLAIMS": {"sub": "mailto:contact@igboarchives.com"}
+}
+
+DJANGO_NOTIFICATIONS_CONFIG = {
+    'USE_JSONFIELD': True,
+    'SOFT_DELETE': True
+}
+
+COMMENTS_APP = 'threadedcomments'
+
+customColorPalette = [
+    {'color': 'hsl(4, 90%, 58%)', 'label': 'Red'},
+    {'color': 'hsl(340, 82%, 52%)', 'label': 'Pink'},
+    {'color': 'hsl(291, 64%, 42%)', 'label': 'Purple'},
+    {'color': 'hsl(262, 52%, 47%)', 'label': 'Deep Purple'},
+    {'color': 'hsl(231, 48%, 48%)', 'label': 'Indigo'},
+    {'color': 'hsl(207, 90%, 54%)', 'label': 'Blue'},
+]
+
+CKEDITOR_5_CONFIGS = {
+    'default': {
+        'toolbar': ['heading', '|', 'bold', 'italic', 'link',
+                    'bulletedList', 'numberedList', 'blockQuote', 'imageUpload'],
+    },
+    'extends': {
+        'blockToolbar': [
+            'paragraph', 'heading1', 'heading2', 'heading3',
+            '|',
+            'bulletedList', 'numberedList',
+            '|',
+            'blockQuote',
+        ],
+        'toolbar': ['heading', '|', 'outdent', 'indent', '|', 'bold', 'italic', 'link', 'underline', 'strikethrough',
+        'code','subscript', 'superscript', 'highlight', '|', 'codeBlock', 'sourceEditing', 'insertImage',
+                    'bulletedList', 'numberedList', 'todoList', '|',  'blockQuote', 'imageUpload', '|',
+                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', 'mediaEmbed', 'removeFormat',
+                    'insertTable',],
+        'image': {
+            'toolbar': ['imageTextAlternative', '|', 'imageStyle:alignLeft',
+                        'imageStyle:alignRight', 'imageStyle:alignCenter', 'imageStyle:side',  '|'],
+            'styles': [
+                'full',
+                'side',
+                'alignLeft',
+                'alignRight',
+                'alignCenter',
+            ]
+
+        },
+        'table': {
+            'contentToolbar': [ 'tableColumn', 'tableRow', 'mergeTableCells',
+            'tableProperties', 'tableCellProperties' ],
+        },
+        'heading' : {
+            'options': [
+                { 'model': 'paragraph', 'title': 'Paragraph', 'class': 'ck-heading_paragraph' },
+                { 'model': 'heading1', 'view': 'h1', 'title': 'Heading 1', 'class': 'ck-heading_heading1' },
+                { 'model': 'heading2', 'view': 'h2', 'title': 'Heading 2', 'class': 'ck-heading_heading2' },
+                { 'model': 'heading3', 'view': 'h3', 'title': 'Heading 3', 'class': 'ck-heading_heading3' }
+            ]
+        }
+    },
+    'list': {
+        'properties': {
+            'styles': 'true',
+            'startIndex': 'true',
+            'reversed': 'true',
+        }
+    }
+}
+
+CKEDITOR_5_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': BASE_DIR / 'backups'}
+
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY', '')
+
+TWITTER_API_KEY = os.getenv('TWITTER_API_KEY', '')
+TWITTER_API_SECRET = os.getenv('TWITTER_API_SECRET', '')
+TWITTER_ACCESS_TOKEN = os.getenv('TWITTER_ACCESS_TOKEN', '')
+TWITTER_ACCESS_TOKEN_SECRET = os.getenv('TWITTER_ACCESS_TOKEN_SECRET', '')
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp-relay.brevo.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.getenv('BREVO_EMAIL_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('BREVO_API_KEY', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@igboarchives.com')

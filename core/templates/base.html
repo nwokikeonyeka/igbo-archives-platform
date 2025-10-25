@@ -1,0 +1,128 @@
+{% load static %}
+{% load pwa %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Igbo Archives - Preserving the Past, Inspiring the Future{% endblock %}</title>
+    
+    {% progressive_web_app_meta %}
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+    
+    <meta name="description" content="{% block meta_description %}Igbo Archives - A platform for Igbo cultural preservation and community engagement{% endblock %}">
+</head>
+<body>
+    <button class="night-mode-toggle" aria-label="Toggle dark mode">🌙</button>
+    <button class="pwa-install-button" style="display: none;">Install App</button>
+    
+    <header class="desktop-header d-none d-md-block">
+        <nav class="navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand logo-container" href="/">
+                    <img src="{% static 'images/logos/logo-dark.png' %}" alt="Igbo Archives" class="logo-image logo-dark">
+                    <img src="{% static 'images/logos/logo-light.png' %}" alt="Igbo Archives" class="logo-image logo-light">
+                </a>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/">Archives</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/insights/">Insights</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/books/">Books</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/ai-chat/">AI Chat</a>
+                        </li>
+                        {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                {{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/profile/{{ user.username }}/">Profile</a></li>
+                                <li><a class="dropdown-item" href="/dashboard/">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="/messages/">Messages</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/accounts/logout/">Logout</a></li>
+                            </ul>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/accounts/login/">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-primary" href="/accounts/signup/">Sign Up</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    
+    <nav class="mobile-nav d-md-none">
+        <a href="/" class="mobile-nav-item">
+            <span class="mobile-nav-icon">📚</span>
+            Archives
+        </a>
+        <a href="/insights/" class="mobile-nav-item">
+            <span class="mobile-nav-icon">✍️</span>
+            Insights
+        </a>
+        <a href="/books/" class="mobile-nav-item">
+            <span class="mobile-nav-icon">📖</span>
+            Books
+        </a>
+        <a href="#" class="mobile-nav-item" onclick="alert('Coming Soon!')">
+            <span class="mobile-nav-icon">🎓</span>
+            Academy
+        </a>
+        <a href="/ai-chat/" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🤖</span>
+            AI
+        </a>
+        {% if user.is_authenticated %}
+        <a href="/dashboard/" class="mobile-nav-item">
+            <span class="mobile-nav-icon">👤</span>
+            Profile
+        </a>
+        {% else %}
+        <a href="/accounts/login/" class="mobile-nav-item">
+            <span class="mobile-nav-icon">🔐</span>
+            Login
+        </a>
+        {% endif %}
+    </nav>
+    
+    <main class="container-main">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% block content %}
+        {% endblock %}
+    </main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

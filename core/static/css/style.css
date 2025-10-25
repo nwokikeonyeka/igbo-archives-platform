@@ -1,0 +1,407 @@
+:root {
+    --sepia-dark: #3D2817;
+    --sepia-brown: #5C4033;
+    --sepia-tan: #8B7355;
+    --sepia-light: #C4A77D;
+    --sepia-cream: #E8D5B7;
+    --parchment: #F4E8D0;
+    --bg-light: #FFFFFF;
+    --text-light: #2C1810;
+    --text-muted-light: #5C4033;
+    --border-light: #E8D5B7;
+    --shadow-light: rgba(61, 40, 23, 0.1);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-light);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+body.dark-mode {
+    --bg-light: #1A1410;
+    --text-light: #E8D5B7;
+    --text-muted-light: #C4A77D;
+    --border-light: #3D2817;
+    --shadow-light: rgba(232, 213, 183, 0.1);
+    --parchment: #2C1810;
+}
+
+.container-main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header.desktop-header {
+    background-color: var(--sepia-dark);
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.logo-image {
+    height: 50px;
+    width: auto;
+    transition: opacity 0.3s ease;
+}
+
+body:not(.dark-mode) .logo-dark {
+    display: none;
+}
+
+body.dark-mode .logo-light {
+    display: none;
+}
+
+.nav-link {
+    color: var(--sepia-cream);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: var(--sepia-brown);
+    color: var(--parchment);
+}
+
+.btn-primary {
+    background-color: var(--sepia-dark);
+    border-color: var(--sepia-dark);
+    color: var(--sepia-cream);
+}
+
+.btn-primary:hover {
+    background-color: var(--sepia-brown);
+    border-color: var(--sepia-brown);
+}
+
+.card {
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px var(--shadow-light);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px var(--shadow-light);
+}
+
+.card-img-top {
+    border-radius: 8px 8px 0 0;
+    object-fit: cover;
+    height: 250px;
+}
+
+.archive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.archive-list .card {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1rem;
+}
+
+.archive-list .card-img-top {
+    width: 200px;
+    height: 150px;
+    border-radius: 8px 0 0 8px;
+}
+
+.mobile-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: var(--sepia-dark);
+    display: flex;
+    justify-content: space-around;
+    padding: 0.75rem 0;
+    box-shadow: 0 -2px 8px var(--shadow-light);
+    z-index: 1000;
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--sepia-cream);
+    text-decoration: none;
+    font-size: 0.75rem;
+    transition: color 0.3s ease;
+}
+
+.mobile-nav-item:hover,
+.mobile-nav-item.active {
+    color: var(--sepia-light);
+}
+
+.mobile-nav-icon {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.filter-section {
+    background-color: var(--parchment);
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.filter-button {
+    background-color: var(--sepia-tan);
+    color: var(--bg-light);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    margin: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-button:hover,
+.filter-button.active {
+    background-color: var(--sepia-dark);
+}
+
+.night-mode-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--sepia-dark);
+    color: var(--sepia-cream);
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px var(--shadow-light);
+    z-index: 1001;
+    font-size: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.night-mode-toggle:hover {
+    transform: scale(1.1);
+}
+
+.pwa-install-button {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    background-color: var(--sepia-dark);
+    color: var(--sepia-cream);
+    border: none;
+    border-radius: 25px;
+    padding: 0.75rem 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px var(--shadow-light);
+    z-index: 1001;
+    display: none;
+    transition: transform 0.3s ease;
+}
+
+.pwa-install-button:hover {
+    transform: scale(1.05);
+}
+
+.back-button {
+    background-color: var(--sepia-tan);
+    color: var(--bg-light);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    background-color: var(--bg-light);
+    color: var(--text-light);
+    margin-bottom: 1rem;
+}
+
+.view-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.view-toggle button {
+    background-color: var(--sepia-tan);
+    color: var(--bg-light);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.view-toggle button.active {
+    background-color: var(--sepia-dark);
+}
+
+.comment-thread {
+    border-left: 3px solid var(--sepia-light);
+    padding-left: 1rem;
+    margin-left: 1rem;
+    margin-top: 1rem;
+}
+
+.notification-badge {
+    background-color: #D32F2F;
+    color: white;
+    border-radius: 50%;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    position: absolute;
+    top: -5px;
+    right: -5px;
+}
+
+@media (max-width: 768px) {
+    .desktop-header {
+        display: none;
+    }
+    
+    body {
+        padding-bottom: 70px;
+    }
+    
+    .archive-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .night-mode-toggle {
+        top: 10px;
+        right: 10px;
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+    }
+}
+
+@media (min-width: 769px) {
+    .mobile-nav {
+        display: none;
+    }
+    
+    .back-button {
+        display: none;
+    }
+}
+
+.hero-carousel {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px var(--shadow-light);
+}
+
+.carousel-item img {
+    height: 400px;
+    object-fit: cover;
+}
+
+.badge-category {
+    background-color: var(--sepia-tan);
+    color: var(--bg-light);
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--sepia-dark);
+}
+
+.message-thread {
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--parchment);
+}
+
+.message-bubble {
+    background-color: var(--bg-light);
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 2px 4px var(--shadow-light);
+}
+
+.chat-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    background-color: var(--parchment);
+    padding: 1rem;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+    padding: 1rem;
+}
+
+.chat-input-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+}
+
+.ai-message {
+    background-color: var(--sepia-light);
+    color: var(--text-light);
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.user-message {
+    background-color: var(--sepia-dark);
+    color: var(--sepia-cream);
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    text-align: right;
+}
