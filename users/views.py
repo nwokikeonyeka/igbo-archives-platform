@@ -54,3 +54,15 @@ def compose_message(request, username):
             Message.objects.create(thread=thread, sender=request.user, content=content)
             return redirect('users:thread', thread_id=thread.id)
     return render(request, 'users/compose.html', {'recipient': recipient})
+
+@login_required
+def delete_account(request):
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        if request.user.check_password(password):
+            request.user.delete()
+            django_messages.success(request, 'Your account has been deleted.')
+            return redirect('core:home')
+        else:
+            django_messages.error(request, 'Incorrect password.')
+    return render(request, 'users/delete_account.html')

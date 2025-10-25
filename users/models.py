@@ -19,8 +19,8 @@ class Thread(models.Model):
     class Meta:
         ordering = ['-updated_at']
     
-    def __str__(self):
-        return self.subject
+    def __str__(self) -> str:
+        return str(self.subject)
 
 class Message(models.Model):
     thread = models.ForeignKey(Thread, on_delete=models.CASCADE, related_name='messages')
@@ -32,5 +32,5 @@ class Message(models.Model):
     class Meta:
         ordering = ['created_at']
     
-    def __str__(self):
+    def __str__(self) -> str:
         return f"Message from {self.sender.username} in {self.thread.subject}"
