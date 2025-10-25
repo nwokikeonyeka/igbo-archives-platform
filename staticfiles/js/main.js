@@ -24,13 +24,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     let deferredPrompt;
-    const installButton = document.querySelector('.pwa-install-button');
+    const installButton = document.getElementById('pwaInstallBtn');
     
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
         if (installButton) {
-            installButton.style.display = 'block';
+            installButton.style.display = 'flex';
         }
     });
     
