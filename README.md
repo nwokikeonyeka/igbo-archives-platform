@@ -14,12 +14,12 @@ Igbo Archives is a dedicated platform for preserving and celebrating the history
 - **Cultural Archives**: Curated collection of Igbo artifacts, photographs, documents, and historical materials
 - **Insights**: Community-generated articles exploring various aspects of Igbo culture
 - **Book Reviews**: Reviews and discussions of literature related to Igbo history and culture
-- **AI Chat Assistant**: Powered by Google Gemini for exploring Igbo heritage
+- **AI Chat Assistant**: Powered by Igbo Archives AI for exploring Igbo heritage
 - **Academy** (Coming Soon): Educational resources for learning Igbo language and traditions
 
 ### Technical Features
 - **Progressive Web App (PWA)**: Installable on mobile and desktop devices
-- **Email-Based Authentication**: Secure signup/login with email and password (no username required)
+- **Email-Based Authentication**: Secure signup/login with email and password
 - **Social Authentication**: Google OAuth integration for easy signup
 - **ReCAPTCHA Protection**: Spam prevention on signup and login forms (configurable)
 - **Push Notifications**: Web push notifications for user engagement
