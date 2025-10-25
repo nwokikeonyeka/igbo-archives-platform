@@ -429,7 +429,7 @@ Contributions are welcome! Please:
 
 For inquiries, suggestions, or contributions:
 - Website: [igboarchives.com.ng](https://igboarchives.com.ng)
-- Email: contact@igboarchives.com
+- Email: igboarchives@gmail.com
 
 ## 🙏 Acknowledgments
 
