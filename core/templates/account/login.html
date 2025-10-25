@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load django_recaptcha %}
 
 {% block title %}Login - Igbo Archives{% endblock %}
 
@@ -21,7 +20,7 @@
             {% endif %}
 
             <div class="form-group">
-                <label for="{{ form.login.id_for_label }}">Username or Email</label>
+                <label for="{{ form.login.id_for_label }}">Email</label>
                 {{ form.login }}
                 {% if form.login.errors %}
                 <div class="form-error">{{ form.login.errors }}</div>
@@ -43,12 +42,14 @@
                 </label>
             </div>
 
+            {% if form.captcha %}
             <div class="form-group captcha-group">
-                {% render_recaptcha %}
+                {{ form.captcha }}
                 {% if form.captcha.errors %}
                 <div class="form-error">{{ form.captcha.errors }}</div>
                 {% endif %}
             </div>
+            {% endif %}
 
             <button type="submit" class="btn btn-primary auth-submit">
                 <i class="fas fa-sign-in-alt"></i> Sign In

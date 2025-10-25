@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from .models import Thread, Message
+from .forms import ProfileEditForm
 from django.contrib import messages as django_messages
 
 User = get_user_model()
@@ -11,8 +12,24 @@ def dashboard(request):
     return render(request, 'users/dashboard.html')
 
 def profile_view(request, username):
+    from archives.models import Archive
+    from insights.models import InsightPost
+    from books.models import BookReview
+    
     user = get_object_or_404(User, username=username)
-    return render(request, 'users/profile.html', {'profile_user': user})
+    
+    archives = Archive.objects.filter(uploaded_by=user).order_by('-uploaded_at')
+    insights = InsightPost.objects.filter(author=user, published=True).order_by('-published_date')
+    book_reviews = BookReview.objects.filter(author=user).order_by('-created_at')
+    
+    context = {
+        'profile_user': user,
+        'archives': archives,
+        'insights': insights,
+        'book_reviews': book_reviews,
+    }
+    
+    return render(request, 'users/profile.html', context)
 
 @login_required
 def profile_edit(request, username):
@@ -22,14 +39,15 @@ def profile_edit(request, username):
         return redirect('users:profile', username=username)
     
     if request.method == 'POST':
-        request.user.full_name = request.POST.get('full_name', '')
-        request.user.bio = request.POST.get('bio', '')
-        if 'profile_picture' in request.FILES:
-            request.user.profile_picture = request.FILES['profile_picture']
-        request.user.save()
-        django_messages.success(request, 'Profile updated successfully!')
-        return redirect('users:profile', username=request.user.username)
-    return render(request, 'users/profile_edit.html')
+        form = ProfileEditForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            django_messages.success(request, 'Profile updated successfully!')
+            return redirect('users:profile', username=request.user.username)
+    else:
+        form = ProfileEditForm(instance=request.user)
+    
+    return render(request, 'users/profile_edit.html', {'form': form})
 
 @login_required
 def message_inbox(request):
