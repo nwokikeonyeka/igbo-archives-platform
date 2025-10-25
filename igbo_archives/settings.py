@@ -127,6 +127,10 @@ LOGOUT_REDIRECT_URL = '/'
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
 ACCOUNT_LOGIN_METHODS = {'username', 'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'username*', 'password1*', 'password2*']
+ACCOUNT_FORMS = {
+    'signup': 'users.forms.CustomSignupForm',
+    'login': 'users.forms.CustomLoginForm',
+}
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
