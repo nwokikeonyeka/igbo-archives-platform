@@ -37,7 +37,6 @@
             <a class="logo-container" href="/">
                 <img src="{% static 'images/logos/logo-dark.png' %}" alt="Igbo Archives" class="logo-image logo-dark">
                 <img src="{% static 'images/logos/logo-light.png' %}" alt="Igbo Archives" class="logo-image logo-light">
-                <span class="logo-text d-none d-sm-inline">Igbo Archives</span>
             </a>
             
             <!-- User Menu - Right -->
@@ -95,6 +94,9 @@
             </a>
         </div>
     </nav>
+    
+    <!-- Conditional Sub-Navigation (loaded per section) -->
+    {% block sub_navigation %}{% endblock %}
     
     <!-- Mobile Bottom Navigation -->
     <nav class="mobile-nav">

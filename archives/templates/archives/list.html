@@ -3,6 +3,65 @@
 
 {% block title %}Cultural Archives - Igbo Archives{% endblock %}
 
+{% block sub_navigation %}
+<nav class="sub-nav" style="display: block;">
+    <div class="sub-nav-container">
+        <span class="sub-nav-label">Filter:</span>
+        
+        <button class="sub-nav-button {% if not request.GET.type %}active{% endif %}"
+                hx-get="{% url 'archives:list' %}?category={{ request.GET.category|default:'' }}&sort={{ request.GET.sort|default:'' }}&search={{ request.GET.search|default:'' }}"
+                hx-target="#archiveGrid"
+                hx-push-url="true">
+            <i class="fas fa-th"></i> All
+        </button>
+        
+        <button class="sub-nav-button {% if request.GET.type == 'image' %}active{% endif %}"
+                hx-get="{% url 'archives:list' %}?type=image&category={{ request.GET.category|default:'' }}&sort={{ request.GET.sort|default:'' }}&search={{ request.GET.search|default:'' }}"
+                hx-target="#archiveGrid"
+                hx-push-url="true">
+            <i class="fas fa-image"></i> Images
+        </button>
+        
+        <button class="sub-nav-button {% if request.GET.type == 'video' %}active{% endif %}"
+                hx-get="{% url 'archives:list' %}?type=video&category={{ request.GET.category|default:'' }}&sort={{ request.GET.sort|default:'' }}&search={{ request.GET.search|default:'' }}"
+                hx-target="#archiveGrid"
+                hx-push-url="true">
+            <i class="fas fa-video"></i> Videos
+        </button>
+        
+        <button class="sub-nav-button {% if request.GET.type == 'document' %}active{% endif %}"
+                hx-get="{% url 'archives:list' %}?type=document&category={{ request.GET.category|default:'' }}&sort={{ request.GET.sort|default:'' }}&search={{ request.GET.search|default:'' }}"
+                hx-target="#archiveGrid"
+                hx-push-url="true">
+            <i class="fas fa-file-alt"></i> Documents
+        </button>
+        
+        <button class="sub-nav-button {% if request.GET.type == 'artifact' %}active{% endif %}"
+                hx-get="{% url 'archives:list' %}?type=artifact&category={{ request.GET.category|default:'' }}&sort={{ request.GET.sort|default:'' }}&search={{ request.GET.search|default:'' }}"
+                hx-target="#archiveGrid"
+                hx-push-url="true">
+            <i class="fas fa-cube"></i> Artifacts
+        </button>
+        
+        <div class="sub-nav-search">
+            <input type="text" 
+                   placeholder="Search archives..." 
+                   id="searchInput"
+                   name="search"
+                   value="{{ request.GET.search }}"
+                   hx-get="{% url 'archives:list' %}"
+                   hx-trigger="keyup changed delay:500ms"
+                   hx-target="#archiveGrid"
+                   hx-include="#categoryFilter,#typeFilter,#sortFilter"
+                   hx-push-url="true">
+            <button class="btn btn-primary" style="padding: 0.5rem 1.25rem;">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+
 {% block content %}
 <div class="container mt-4">
     <!-- Featured Carousel -->
