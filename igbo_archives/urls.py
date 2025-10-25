@@ -23,6 +23,7 @@ urlpatterns = [
     path('insights/', include('insights.urls')),
     path('books/', include('books.urls')),
     path('ai-chat/', include('ai_service.urls')),
+    path('academy/', include('academy.urls')),
     path('comments/', include('django_comments.urls')),
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 ]
