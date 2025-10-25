@@ -6,9 +6,6 @@ Igbo Archives is a Django-based web platform dedicated to preserving and celebra
 
 The platform emphasizes community engagement through threaded comments, user-contributed content, and moderation workflows while maintaining a clean, vintage-inspired aesthetic that reflects heritage photography and modern museum design principles.
 
-## User Preferences
-
-Preferred communication style: Simple, everyday language.
 
 ## System Architecture
 
