@@ -35,12 +35,12 @@ class Command(BaseCommand):
         try:
             if not options['media_only']:
                 self.stdout.write(self.style.WARNING(f'[{timestamp}] Starting database backup...'))
-                call_command('dbbackup', '--clean' if options['clean'] else '')
+                call_command('dbbackup', clean=options['clean'])
                 self.stdout.write(self.style.SUCCESS(f'[{timestamp}] Database backup completed successfully!'))
             
             if not options['database_only']:
                 self.stdout.write(self.style.WARNING(f'[{timestamp}] Starting media backup...'))
-                call_command('mediabackup', '--clean' if options['clean'] else '')
+                call_command('mediabackup', clean=options['clean'])
                 self.stdout.write(self.style.SUCCESS(f'[{timestamp}] Media backup completed successfully!'))
             
             self.stdout.write(self.style.SUCCESS('\n=== Backup Summary ==='))
