@@ -265,3 +265,20 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.getenv('BREVO_EMAIL_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('BREVO_API_KEY', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@igboarchives.com')
+
+# Push Notifications Configuration
+PUSH_NOTIFICATIONS_SETTINGS = {
+    'WNS_PACKAGE_SECURITY_ID': os.getenv('WNS_PACKAGE_SECURITY_ID'),
+    'WNS_SECRET_KEY': os.getenv('WNS_SECRET_KEY'),
+    'GCM_API_KEY': os.getenv('FCM_SERVER_KEY'),  # Firebase Cloud Messaging
+    'APNS_CERTIFICATE': os.getenv('APNS_CERTIFICATE'),
+    'APNS_TOPIC': os.getenv('APNS_TOPIC'),
+    'WP_PRIVATE_KEY': os.getenv('VAPID_PRIVATE_KEY'),
+    'WP_CLAIMS': {
+        'sub': 'mailto:admin@igboarchives.com'
+    }
+}
+
+# VAPID Keys for Web Push (set these in environment variables)
+VAPID_PUBLIC_KEY = os.getenv('VAPID_PUBLIC_KEY', '')
+VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', '')

@@ -15,7 +15,12 @@ def profile_view(request, username):
     return render(request, 'users/profile.html', {'profile_user': user})
 
 @login_required
-def profile_edit(request):
+def profile_edit(request, username):
+    # Only allow users to edit their own profile
+    if request.user.username != username:
+        django_messages.error(request, 'You can only edit your own profile.')
+        return redirect('users:profile', username=username)
+    
     if request.method == 'POST':
         request.user.full_name = request.POST.get('full_name', '')
         request.user.bio = request.POST.get('bio', '')

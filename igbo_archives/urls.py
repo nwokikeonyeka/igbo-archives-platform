@@ -18,6 +18,7 @@ urlpatterns = [
     path('', include('core.urls')),
     path('accounts/', include('allauth.urls')),
     path('profile/', include('users.urls')),
+    path('api/', include('api.urls')),
     path('archives/', include('archives.urls')),
     path('insights/', include('insights.urls')),
     path('books/', include('books.urls')),
