@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}AI Chat - Igbo Archives{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+    <h2>AI Assistant</h2>
+    <div id="chat-log" class="chat-messages">
+        <div class="ai-message">
+            Hello! I'm your Igbo Archives AI assistant. I can help you learn about Igbo culture, history, and heritage. How can I assist you today?
+        </div>
+    </div>
+    <div class="chat-input-container">
+        <input type="text" id="chat-input" class="chat-input" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
+        <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+async function sendMessage() {
+    const input = document.getElementById('chat-input');
+    const message = input.value.trim();
+    if (!message) return;
+    
+    const chatLog = document.getElementById('chat-log');
+    chatLog.innerHTML += `<div class="user-message">${message}</div>`;
+    input.value = '';
+    chatLog.scrollTop = chatLog.scrollHeight;
+    
+    chatLog.innerHTML += `<div class="ai-message">Thinking...</div>`;
+    
+    try {
+        const response = await fetch('/ai-chat/api/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: message })
+        });
+        
+        const data = await response.json();
+        
+        const lastMessage = chatLog.lastElementChild;
+        lastMessage.textContent = data.response || data.error;
+        chatLog.scrollTop = chatLog.scrollHeight;
+    } catch (error) {
+        const lastMessage = chatLog.lastElementChild;
+        lastMessage.textContent = 'Sorry, I encountered an error. Please try again.';
+    }
+}
+</script>
+{% endblock %}

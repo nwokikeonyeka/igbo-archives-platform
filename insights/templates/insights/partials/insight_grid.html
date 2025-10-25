@@ -1,0 +1,58 @@
+{% if insights %}
+    {% for insight in insights %}
+    <div class="col">
+        <div class="card h-100">
+            {% if insight.featured_image %}
+            <img src="{{ insight.featured_image.url }}" class="card-img-top" alt="{{ insight.alt_text }}" style="height: 200px; object-fit: cover;">
+            {% endif %}
+            <div class="card-body">
+                <h5 class="card-title">{{ insight.title }}</h5>
+                <p class="card-text text-muted">
+                    <small>By {{ insight.author.get_full_name|default:insight.author.username }} on {{ insight.created_at|date:"M d, Y" }}</small>
+                </p>
+                <p class="card-text">{{ insight.excerpt|default:insight.content|striptags|truncatewords:20 }}</p>
+            </div>
+            <div class="card-footer">
+                <a href="{% url 'insights:detail' insight.slug %}" class="btn btn-sm btn-primary">Read More</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Pagination -->
+    {% if insights.has_other_pages %}
+    <div class="col-12 mt-4">
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if insights.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ insights.previous_page_number }}{% if request.GET.tag %}&tag={{ request.GET.tag }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Previous</a>
+                </li>
+                {% endif %}
+
+                {% for num in insights.paginator.page_range %}
+                    {% if insights.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > insights.number|add:'-3' and num < insights.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.tag %}&tag={{ request.GET.tag }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if insights.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ insights.next_page_number }}{% if request.GET.tag %}&tag={{ request.GET.tag }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+{% else %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            No insights found. <a href="{% url 'insights:create' %}">Be the first to share your thoughts!</a>
+        </div>
+    </div>
+{% endif %}

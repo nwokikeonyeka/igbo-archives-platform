@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Messages{% endblock %}
+
+{% block content %}
+<h2>Messages</h2>
+
+<div class="list-group">
+    {% for thread in threads %}
+    <a href="{% url 'users:thread' thread.id %}" class="list-group-item list-group-item-action">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ thread.subject }}</h5>
+            <small>{{ thread.updated_at|date:"M d, Y" }}</small>
+        </div>
+    </a>
+    {% empty %}
+    <p>No messages yet.</p>
+    {% endfor %}
+</div>
+{% endblock %}

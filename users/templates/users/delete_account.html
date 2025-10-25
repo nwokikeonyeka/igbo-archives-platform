@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Account{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-danger">Delete Account</h2>
+    <div class="alert alert-danger">
+        <strong>Warning!</strong> This action cannot be undone. All your data will be permanently deleted.
+    </div>
+    
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="password" class="form-label">Confirm your password to delete your account:</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-danger">Delete My Account</button>
+        <a href="{% url 'users:dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

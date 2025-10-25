@@ -1,0 +1,33 @@
+from django.contrib import admin
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from django.contrib.sitemaps.views import sitemap
+from core.sitemaps import ArchiveSitemap, InsightSitemap, BookSitemap, UserProfileSitemap
+
+sitemaps = {
+    'archives': ArchiveSitemap,
+    'insights': InsightSitemap,
+    'books': BookSitemap,
+    'users': UserProfileSitemap,
+}
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('pwa.urls')),
+    path('', include('core.urls')),
+    path('accounts/', include('allauth.urls')),
+    path('profile/', include('users.urls')),
+    path('api/', include('api.urls')),
+    path('archives/', include('archives.urls')),
+    path('insights/', include('insights.urls')),
+    path('books/', include('books.urls')),
+    path('ai-chat/', include('ai_service.urls')),
+    path('academy/', include('academy.urls')),
+    path('comments/', include('django_comments.urls')),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

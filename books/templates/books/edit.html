@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit {{ review.review_title }} - Igbo Archives{% endblock %}
+
+{% block extra_css %}
+<script type="importmap">
+{
+    "imports": {
+        "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.js",
+        "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.3.1/"
+    }
+}
+</script>
+<script type="module" src="{% static 'django_ckeditor_5/dist/bundle.js' %}"></script>
+<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h1 class="mb-4">Edit Book Review</h1>
+            
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="book_title" class="form-label">Book Title *</label>
+                    <input type="text" class="form-control" id="book_title" name="book_title" value="{{ review.book_title }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="author" class="form-label">Book Author *</label>
+                    <input type="text" class="form-control" id="author" name="author" value="{{ review.author }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="isbn" class="form-label">ISBN</label>
+                    <input type="text" class="form-control" id="isbn" name="isbn" value="{{ review.isbn }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="review_title" class="form-label">Review Title *</label>
+                    <input type="text" class="form-control" id="review_title" name="review_title" value="{{ review.review_title }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="rating" class="form-label">Rating *</label>
+                    <select class="form-select" id="rating" name="rating" required>
+                        <option value="5" {% if review.rating == 5 %}selected{% endif %}>5 Stars - Excellent</option>
+                        <option value="4" {% if review.rating == 4 %}selected{% endif %}>4 Stars - Very Good</option>
+                        <option value="3" {% if review.rating == 3 %}selected{% endif %}>3 Stars - Good</option>
+                        <option value="2" {% if review.rating == 2 %}selected{% endif %}>2 Stars - Fair</option>
+                        <option value="1" {% if review.rating == 1 %}selected{% endif %}>1 Star - Poor</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="content" class="form-label">Review Content *</label>
+                    <textarea class="form-control" id="content" name="content" required>{{ review.content }}</textarea>
+                </div>
+
+                {% if review.cover_image %}
+                <div class="mb-3">
+                    <label class="form-label">Current Cover Image</label>
+                    <div class="mb-2">
+                        <img src="{{ review.cover_image.url }}" alt="{{ review.book_title }}" class="img-thumbnail" style="max-width: 200px;">
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <label for="cover_image" class="form-label">Book Cover Image</label>
+                    <input type="file" class="form-control" id="cover_image" name="cover_image" accept=".jpg,.jpeg,.png,.webp">
+                    <div class="form-text">Leave empty to keep current image</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="tags" class="form-label">Tags</label>
+                    <input type="text" class="form-control" id="tags" name="tags" value="{% for tag in review.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}" placeholder="Enter tags separated by commas">
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="is_published" name="is_published" {% if review.is_published %}checked{% endif %}>
+                    <label class="form-check-label" for="is_published">
+                        Published
+                    </label>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Update Review</button>
+                    <a href="{% url 'books:detail' review.slug %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

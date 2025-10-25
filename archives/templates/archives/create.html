@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Upload Archive - Igbo Archives{% endblock %}
+
+{% block extra_css %}
+<script type="importmap">
+{
+    "imports": {
+        "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.js",
+        "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.3.1/"
+    }
+}
+</script>
+<script type="module" src="{% static 'django_ckeditor_5/dist/bundle.js' %}"></script>
+<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css">
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="mb-4">Upload Cultural Archive</h1>
+            
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title *</label>
+                    <input type="text" class="form-control" id="title" name="title" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description *</label>
+                    <textarea class="form-control" id="description" name="description" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="archive_type" class="form-label">Archive Type *</label>
+                    <select class="form-select" id="archive_type" name="archive_type" required>
+                        <option value="">Select type...</option>
+                        <option value="image">Image</option>
+                        <option value="video">Video</option>
+                        <option value="document">Document</option>
+                        <option value="artifact">Artifact</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select class="form-select" id="category" name="category">
+                        <option value="">Select category...</option>
+                        {% for cat in categories %}
+                        <option value="{{ cat.id }}">{{ cat.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="image" class="form-label">Image/File *</label>
+                    <input type="file" class="form-control" id="image" name="image" accept=".jpg,.jpeg,.png,.webp" required>
+                    <div class="form-text">Accepted formats: JPG, JPEG, PNG, WEBP</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="alt_text" class="form-label">Image Description (Alt Text) *</label>
+                    <input type="text" class="form-control" id="alt_text" name="alt_text" required>
+                    <div class="form-text">Describe the image for accessibility</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="date_created" class="form-label">Date Created (if known)</label>
+                    <input type="date" class="form-control" id="date_created" name="date_created">
+                </div>
+
+                <div class="mb-3">
+                    <label for="tags" class="form-label">Tags</label>
+                    <input type="text" class="form-control" id="tags" name="tags" placeholder="Enter tags separated by commas">
+                    <div class="form-text">e.g., mask, ceremony, traditional</div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Upload Archive</button>
+                    <a href="{% url 'archives:list' %}" class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import { ClassicEditor, Bold, Essentials, Italic, Paragraph, Link, List, Heading, BlockQuote } from 'ckeditor5';
+
+ClassicEditor
+    .create( document.querySelector( '#description' ), {
+        plugins: [ Essentials, Bold, Italic, Paragraph, Link, List, Heading, BlockQuote ],
+        toolbar: [ 'heading', '|', 'bold', 'italic', 'link', '|', 'bulletedList', 'numberedList', 'blockQuote' ]
+    } )
+    .catch( error => {
+        console.error( error );
+    } );
+</script>
+{% endblock %}

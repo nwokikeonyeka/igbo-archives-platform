@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load django_comments %}
+{% load threadedcomments_tags %}
+
+{% block title %}{{ review.review_title }} - Book Reviews{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <article class="book-review-detail">
+                <h1 class="mb-3">{{ review.review_title }}</h1>
+                <h3 class="text-muted mb-3">{{ review.book_title }}</h3>
+                
+                <div class="review-meta mb-3">
+                    <div class="rating mb-2">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= review.rating %}
+                                <i class="bi bi-star-fill text-warning"></i>
+                            {% else %}
+                                <i class="bi bi-star text-warning"></i>
+                            {% endif %}
+                        {% endfor %}
+                        <span class="ms-2">({{ review.rating }}/5)</span>
+                    </div>
+                    <small class="text-muted">
+                        Reviewed by <a href="{% url 'users:profile' review.reviewer.username %}">{{ review.reviewer.get_full_name|default:review.reviewer.username }}</a>
+                        on {{ review.created_at|date:"F d, Y" }}
+                    </small>
+                </div>
+
+                <div class="row mb-4">
+                    {% if review.cover_image %}
+                    <div class="col-md-4">
+                        <img src="{{ review.cover_image.url }}" alt="{{ review.book_title }}" class="img-fluid rounded">
+                    </div>
+                    <div class="col-md-8">
+                    {% else %}
+                    <div class="col-12">
+                    {% endif %}
+                        <p><strong>Author:</strong> {{ review.author }}</p>
+                        {% if review.isbn %}
+                        <p><strong>ISBN:</strong> {{ review.isbn }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="review-content mb-4">
+                    {{ review.content|safe }}
+                </div>
+
+                <div class="review-tags mb-4">
+                    <strong>Tags:</strong>
+                    {% for tag in review.tags.all %}
+                    <a href="{% url 'books:list' %}?tag={{ tag.name }}" class="badge bg-light text-dark">{{ tag.name }}</a>
+                    {% endfor %}
+                </div>
+
+                {% if user == review.reviewer %}
+                <div class="review-actions mb-4">
+                    <a href="{% url 'books:edit' review.slug %}" class="btn btn-primary">
+                        <i class="bi bi-pencil"></i> Edit Review
+                    </a>
+                </div>
+                {% endif %}
+
+                <hr>
+
+                <!-- Comments Section -->
+                <div class="comments-section mt-5">
+                    <h3>Discussion</h3>
+                    {% render_comment_list for review %}
+                    {% if user.is_authenticated %}
+                        {% render_comment_form for review %}
+                    {% else %}
+                        {% include "books/partials/guest_comment_form.html" %}
+                    {% endif %}
+                </div>
+            </article>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="sidebar">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">About the Reviewer</h5>
+                        <p>
+                            <a href="{% url 'users:profile' review.reviewer.username %}">
+                                {{ review.reviewer.get_full_name|default:review.reviewer.username }}
+                            </a>
+                        </p>
+                        {% if review.reviewer.bio %}
+                        <p class="text-muted">{{ review.reviewer.bio|truncatewords:30 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

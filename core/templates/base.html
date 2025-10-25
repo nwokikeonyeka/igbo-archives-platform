@@ -1,0 +1,249 @@
+{% load static %}
+{% load pwa %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Igbo Archives - Preserving the Past, Inspiring the Future{% endblock %}</title>
+    
+    {% progressive_web_app_meta %}
+    
+    {% if VAPID_PUBLIC_KEY %}
+    <meta name="vapid-public-key" content="{{ VAPID_PUBLIC_KEY }}">
+    {% endif %}
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    
+    {% block extra_css %}{% endblock %}
+    
+    <meta name="description" content="{% block meta_description %}Igbo Archives - A platform for Igbo cultural preservation and community engagement{% endblock %}">
+</head>
+<body>
+    <button class="pwa-install-button" id="pwaInstallBtn" aria-label="Install App">
+        <i class="fas fa-download"></i>
+    </button>
+    
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="header-container">
+            <!-- Dark Mode Toggle - Left -->
+            <button class="dark-mode-toggle" aria-label="Toggle dark mode" id="darkModeToggle">
+                <i class="fas fa-moon"></i>
+            </button>
+            
+            <!-- Logo - Center -->
+            <a class="logo-container" href="/">
+                <img src="{% static 'images/logos/logo-dark.png' %}" alt="Igbo Archives" class="logo-image logo-dark">
+                <img src="{% static 'images/logos/logo-light.png' %}" alt="Igbo Archives" class="logo-image logo-light">
+            </a>
+            
+            <!-- User Menu - Right -->
+            <div class="user-menu">
+                {% if user.is_authenticated %}
+                    <button class="profile-button" id="profileButton">
+                        <div class="profile-icon">{{ user.username|slice:":1"|upper }}</div>
+                        <span class="d-none d-sm-inline">{{ user.username }}</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    
+                    <div class="profile-dropdown" id="profileDropdown">
+                        <a href="/profile/{{ user.username }}/" class="profile-dropdown-item">
+                            <i class="fas fa-user"></i> My Profile
+                        </a>
+                        <a href="/profile/dashboard/" class="profile-dropdown-item">
+                            <i class="fas fa-th-large"></i> Dashboard
+                        </a>
+                        <a href="/profile/messages/" class="profile-dropdown-item">
+                            <i class="fas fa-envelope"></i> Messages
+                        </a>
+                        <a href="/profile/{{ user.username }}/edit/" class="profile-dropdown-item">
+                            <i class="fas fa-edit"></i> Edit Profile
+                        </a>
+                        <a href="/profile/delete-account/" class="profile-dropdown-item">
+                            <i class="fas fa-trash-alt"></i> Delete Account
+                        </a>
+                        <a href="/accounts/logout/" class="profile-dropdown-item">
+                            <i class="fas fa-sign-out-alt"></i> Logout
+                        </a>
+                    </div>
+                {% else %}
+                    <a href="/accounts/login/" class="login-button">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+    
+    <!-- Desktop Navigation -->
+    <nav class="desktop-nav">
+        <div class="nav-container">
+            <a href="/archives/" class="nav-link {% if request.path == '/archives/' or request.path == '/' %}active{% endif %}">
+                <i class="fas fa-archive"></i> Archives
+            </a>
+            <a href="/insights/" class="nav-link {% if '/insights/' in request.path %}active{% endif %}">
+                <i class="fas fa-lightbulb"></i> Insights
+            </a>
+            <a href="/books/" class="nav-link {% if '/books/' in request.path %}active{% endif %}">
+                <i class="fas fa-book"></i> Books
+            </a>
+            <a href="/academy/" class="nav-link {% if '/academy/' in request.path %}active{% endif %}">
+                <i class="fas fa-graduation-cap"></i> Academy
+            </a>
+        </div>
+    </nav>
+    
+    <!-- Conditional Sub-Navigation (loaded per section) -->
+    {% block sub_navigation %}{% endblock %}
+    
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <a href="/archives/" class="mobile-nav-item {% if request.path == '/archives/' or request.path == '/' %}active{% endif %}">
+            <i class="fas fa-archive"></i>
+            <span>Archives</span>
+        </a>
+        <a href="/insights/" class="mobile-nav-item {% if '/insights/' in request.path %}active{% endif %}">
+            <i class="fas fa-lightbulb"></i>
+            <span>Insights</span>
+        </a>
+        <a href="/books/" class="mobile-nav-item {% if '/books/' in request.path %}active{% endif %}">
+            <i class="fas fa-book"></i>
+            <span>Books</span>
+        </a>
+        <a href="/academy/" class="mobile-nav-item {% if '/academy/' in request.path %}active{% endif %}">
+            <i class="fas fa-graduation-cap"></i>
+            <span>Academy</span>
+        </a>
+    </nav>
+    
+    <!-- Main Content -->
+    <main class="container-main">
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        {% block content %}
+        {% endblock %}
+    </main>
+    
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-grid">
+                <!-- About Section -->
+                <div class="footer-section">
+                    <h3>About Igbo Archives</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.7;">
+                        Preserving and celebrating Igbo culture through digital archiving, 
+                        storytelling, and community engagement.
+                    </p>
+                </div>
+                
+                <!-- Quick Links -->
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <a href="/archives/" class="footer-link">Cultural Archives</a>
+                    <a href="/insights/" class="footer-link">Insights</a>
+                    <a href="/books/" class="footer-link">Book Reviews</a>
+                    <a href="/academy/" class="footer-link">Academy</a>
+                </div>
+                
+                <!-- Resources -->
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <a href="/about/" class="footer-link">About Us</a>
+                    <a href="/privacy/" class="footer-link">Privacy Policy</a>
+                    <a href="/terms/" class="footer-link">Terms of Service</a>
+                    <a href="/contact/" class="footer-link">Contact Us</a>
+                </div>
+                
+                <!-- Customer Service -->
+                <div class="footer-section">
+                    <h3>Customer Service</h3>
+                    <a href="/ai-chat/" class="footer-link">
+                        <i class="fas fa-robot"></i> AI Support Chat
+                    </a>
+                    <a href="/help/" class="footer-link">
+                        <i class="fas fa-question-circle"></i> Help Center
+                    </a>
+                    <a href="/faq/" class="footer-link">
+                        <i class="fas fa-book-open"></i> FAQ
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p>&copy; 2025 Igbo Archives. All rights reserved. Preserving culture, inspiring the future.</p>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+    <script src="{% static 'js/push-notifications.js' %}"></script>
+    
+    <script>
+    // Dark Mode Toggle
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const body = document.body;
+    const icon = darkModeToggle.querySelector('i');
+    
+    // Check for saved preference
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        body.classList.add('dark-mode');
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+    }
+    
+    darkModeToggle.addEventListener('click', () => {
+        body.classList.toggle('dark-mode');
+        
+        if (body.classList.contains('dark-mode')) {
+            localStorage.setItem('darkMode', 'enabled');
+            icon.classList.remove('fa-moon');
+            icon.classList.add('fa-sun');
+        } else {
+            localStorage.setItem('darkMode', 'disabled');
+            icon.classList.remove('fa-sun');
+            icon.classList.add('fa-moon');
+        }
+    });
+    
+    // Profile Dropdown Toggle
+    const profileButton = document.getElementById('profileButton');
+    const profileDropdown = document.getElementById('profileDropdown');
+    
+    if (profileButton && profileDropdown) {
+        profileButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileDropdown.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', () => {
+            profileDropdown.classList.remove('show');
+        });
+        
+        // Prevent dropdown from closing when clicking inside it
+        profileDropdown.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

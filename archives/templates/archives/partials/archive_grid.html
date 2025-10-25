@@ -1,0 +1,60 @@
+{% if archives %}
+    {% for archive in archives %}
+    <div class="col">
+        <div class="card h-100">
+            <img src="{{ archive.image.url }}" class="card-img-top" alt="{{ archive.alt_text }}" style="height: 200px; object-fit: cover;">
+            <div class="card-body">
+                <h5 class="card-title">{{ archive.title }}</h5>
+                <p class="card-text">{{ archive.description|truncatewords:15 }}</p>
+                <div class="mb-2">
+                    <span class="badge bg-secondary">{{ archive.get_archive_type_display }}</span>
+                    {% if archive.category %}
+                    <span class="badge bg-primary">{{ archive.category.name }}</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-footer">
+                <small class="text-muted">{{ archive.created_at|date:"M d, Y" }}</small>
+                <a href="{% url 'archives:detail' archive.pk %}" class="btn btn-sm btn-primary float-end">View</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- Pagination -->
+    {% if archives.has_other_pages %}
+    <div class="col-12 mt-4">
+        <nav>
+            <ul class="pagination justify-content-center">
+                {% if archives.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ archives.previous_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Previous</a>
+                </li>
+                {% endif %}
+
+                {% for num in archives.paginator.page_range %}
+                    {% if archives.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                    {% elif num > archives.number|add:'-3' and num < archives.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ num }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if archives.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ archives.next_page_number }}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.sort %}&sort={{ request.GET.sort }}{% endif %}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+{% else %}
+    <div class="col-12">
+        <div class="alert alert-info">
+            No archives found matching your criteria. <a href="{% url 'archives:list' %}">View all archives</a>
+        </div>
+    </div>
+{% endif %}
