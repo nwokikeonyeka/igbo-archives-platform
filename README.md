@@ -174,7 +174,7 @@
 ---
 
 ## Phase 4: AI & Automation (5-7 Days)
-**Goal:** Integrate the Gemini AI chat service and automate content distribution to X/Twitter and email subscribers.
+**Goal:** Integrate the Gemini AI chat service and automate content distribution to X/Twitter. Platform users are either authenticated users or guests—no intermediate subscriber tier.
 
 ### Sub-Steps
 
@@ -188,16 +188,20 @@
 * **Logic:** Query for approved `InsightPost` instances not yet posted (`posted_to_social=False`). For each post, use the `tweepy` library (authenticating with keys from `.env`) to upload the featured image (if present) and create a tweet containing the title, a short description/excerpt, relevant hashtags (#Igbo, #IgboArchives), and the post's absolute URL. Handle potential errors (e.g., image too large, API limits). Update the `posted_to_social` flag on success.
 * **Automation (Cron Job):** Schedule this command to run periodically (e.g., hourly or daily) on the Oracle VM. *Rationale: Automates content promotion on a key social platform.*
 
-**Subscriber Emails (core app):**
-* Create the `Subscriber` model and a simple signup form (e.g., in the footer).
-* Implement the `post_save` signal receiver for `InsightPost`. On approval (`instance.is_approved` becomes `True`), the receiver should:
-    * Query all active `Subscriber` email addresses.
-    * Construct the email content (e.g., using Django templates, including post title, excerpt, link).
-    * Iterate through subscribers in batches (e.g., 50-100). For each batch, use `django.core.mail.send_mass_mail` or loop and use `send_mail`, configured to use Brevo's SMTP credentials (from `.env`). Include error handling and possibly `time.sleep` to respect Brevo's rate limits if needed (though 300/day allows for bursts). *Rationale: Engages registered subscribers with new content.*
+**Essential Website Pages:**
+* Create essential legal and informational pages: Terms of Service (with user responsibility for image copyright), Copyright/Licensing Policy (explaining Creative Commons usage and image attribution requirements), Privacy Policy, About Us, and Contact.
+* Integrate Terms of Service acceptance checkbox in signup form to ensure users agree before creating an account.
+* Add these pages to the website footer for easy access. *Rationale: Provides necessary legal protection and transparency.*
+
+**Authentication Enhancements:**
+* Configure authentication to use email and password only (no manual username selection).
+* Auto-generate usernames from email addresses for both standard signup and Google OAuth.
+* Add reCAPTCHA protection to both login and signup forms to prevent spam and abuse.
+* Display user's full name (not username) throughout the platform for a more personal experience. *Rationale: Simplifies user experience and enhances security.*
 
 **Dependencies:** Phase 3.
-**Output:** A functional AI chat assistant, automated posting to X/Twitter, and email notifications for new content subscribers.
-**Testing:** Interact with the AI chat. Approve a new post and verify it appears on the configured X/Twitter account and that subscriber emails are sent correctly (use test email addresses).
+**Output:** A functional AI chat assistant, automated posting to X/Twitter, comprehensive legal pages, and enhanced authentication system.
+**Testing:** Interact with the AI chat. Approve a new post and verify it appears on the configured X/Twitter account. Test signup/login with email-based authentication and reCAPTCHA. Verify Terms of Service acceptance is required during signup.
 
 ---
 
