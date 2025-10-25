@@ -1,12 +1,18 @@
 from allauth.account.forms import SignupForm, LoginForm
-from django_recaptcha.fields import ReCaptchaField
-from django_recaptcha.widgets import ReCaptchaV2Checkbox
 from django import forms
+from django.conf import settings
 import re
+
+# Only import reCAPTCHA if keys are configured
+if getattr(settings, 'RECAPTCHA_PUBLIC_KEY', '') and getattr(settings, 'RECAPTCHA_PRIVATE_KEY', ''):
+    from django_recaptcha.fields import ReCaptchaField
+    from django_recaptcha.widgets import ReCaptchaV2Checkbox
+    RECAPTCHA_ENABLED = True
+else:
+    RECAPTCHA_ENABLED = False
 
 
 class CustomSignupForm(SignupForm):
-    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
     full_name = forms.CharField(
         max_length=200,
         required=True,
@@ -27,6 +33,10 @@ class CustomSignupForm(SignupForm):
         super().__init__(*args, **kwargs)
         if 'username' in self.fields:
             del self.fields['username']
+        
+        # Add reCAPTCHA field only if keys are configured
+        if RECAPTCHA_ENABLED:
+            self.fields['captcha'] = ReCaptchaField(widget=ReCaptchaV2Checkbox())
         
         self.fields['email'].widget.attrs.update({
             'class': 'form-control',
@@ -62,10 +72,13 @@ class CustomSignupForm(SignupForm):
 
 
 class CustomLoginForm(LoginForm):
-    captcha = ReCaptchaField(widget=ReCaptchaV2Checkbox())
-    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        
+        # Add reCAPTCHA field only if keys are configured
+        if RECAPTCHA_ENABLED:
+            self.fields['captcha'] = ReCaptchaField(widget=ReCaptchaV2Checkbox())
+        
         self.fields['login'].widget.attrs.update({
             'class': 'form-control',
             'placeholder': 'Enter your email address'

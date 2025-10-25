@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load captcha %}
 
 {% block title %}Sign Up - Igbo Archives{% endblock %}
 
@@ -53,12 +52,14 @@
                 {% endif %}
             </div>
 
+            {% if form.captcha %}
             <div class="form-group captcha-group">
-                {% render_recaptcha %}
+                {{ form.captcha }}
                 {% if form.captcha.errors %}
                 <div class="form-error">{{ form.captcha.errors }}</div>
                 {% endif %}
             </div>
+            {% endif %}
 
             <button type="submit" class="btn btn-primary auth-submit">
                 <i class="fas fa-user-plus"></i> Create Account
