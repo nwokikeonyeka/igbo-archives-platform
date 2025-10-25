@@ -2,6 +2,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.sitemaps.views import sitemap
+from core.sitemaps import ArchiveSitemap, InsightSitemap, BookSitemap, UserProfileSitemap
+
+sitemaps = {
+    'archives': ArchiveSitemap,
+    'insights': InsightSitemap,
+    'books': BookSitemap,
+    'users': UserProfileSitemap,
+}
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -14,6 +23,7 @@ urlpatterns = [
     path('books/', include('books.urls')),
     path('ai-chat/', include('ai_service.urls')),
     path('comments/', include('django_comments.urls')),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 ]
 
 if settings.DEBUG:

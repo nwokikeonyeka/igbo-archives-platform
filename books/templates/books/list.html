@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Reviews - Igbo Archives{% endblock %}
+
+{% block content %}
+<h2>Book Reviews</h2>
+
+<div class="filter-section">
+    <input type="text" class="search-input" placeholder="Search books...">
+    <div class="view-toggle">
+        <button class="active" onclick="toggleView('grid')">Grid View</button>
+        <button onclick="toggleView('list')">List View</button>
+    </div>
+</div>
+
+<div class="archive-container archive-grid">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Book Reviews</h5>
+            <p class="card-text">Book reviews will be displayed here.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

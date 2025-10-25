@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Igbo Archives{% endblock %}
+
+{% block content %}
+<h2>Welcome, {{ user.username }}!</h2>
+
+<ul class="nav nav-tabs" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" data-bs-toggle="tab" href="#insights">My Insights</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#drafts">My Drafts</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#reviews">My Book Reviews</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" data-bs-toggle="tab" href="#messages">Messages</a>
+    </li>
+</ul>
+
+<div class="tab-content mt-3">
+    <div id="insights" class="tab-pane fade show active">
+        <p>Your published insights will appear here.</p>
+    </div>
+    <div id="drafts" class="tab-pane fade">
+        <p>Your draft posts will appear here.</p>
+    </div>
+    <div id="reviews" class="tab-pane fade">
+        <p>Your book reviews will appear here.</p>
+    </div>
+    <div id="messages" class="tab-pane fade">
+        <p>Your private messages will appear here.</p>
+    </div>
+</div>
+{% endblock %}

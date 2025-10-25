@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Archives - Igbo Archives{% endblock %}
+
+{% block content %}
+<h2>Cultural Archives</h2>
+
+<div class="filter-section">
+    <input type="text" class="search-input" placeholder="Search archives...">
+    <div class="view-toggle">
+        <button class="active" onclick="toggleView('grid')">Grid View</button>
+        <button onclick="toggleView('list')">List View</button>
+    </div>
+</div>
+
+<div class="archive-container archive-grid">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Welcome to Archives</h5>
+            <p class="card-text">Cultural artifacts and historical items will be displayed here.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
