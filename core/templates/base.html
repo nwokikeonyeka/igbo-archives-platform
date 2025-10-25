@@ -181,6 +181,29 @@
                         <i class="fas fa-book-open"></i> FAQ
                     </a>
                 </div>
+                
+                <!-- Newsletter Subscription -->
+                <div class="footer-section">
+                    <h3>Stay Updated</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+                        Subscribe to receive notifications about new content.
+                    </p>
+                    <form id="subscribe-form" class="subscribe-form">
+                        {% csrf_token %}
+                        <input 
+                            type="email" 
+                            name="email" 
+                            id="subscribe-email"
+                            placeholder="Your email address" 
+                            required
+                            class="subscribe-input"
+                        >
+                        <button type="submit" class="subscribe-btn">
+                            <i class="fas fa-paper-plane"></i> Subscribe
+                        </button>
+                    </form>
+                    <div id="subscribe-message" style="margin-top: 0.5rem; font-size: 0.875rem;"></div>
+                </div>
             </div>
             
             <!-- Footer Bottom -->
@@ -243,6 +266,108 @@
         });
     }
     </script>
+    
+    <!-- Subscribe Form Handler -->
+    <script>
+    document.getElementById('subscribe-form')?.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const form = e.target;
+        const email = document.getElementById('subscribe-email').value;
+        const messageDiv = document.getElementById('subscribe-message');
+        const submitBtn = form.querySelector('.subscribe-btn');
+        
+        // Disable button during submission
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Subscribing...';
+        
+        try {
+            const response = await fetch('/subscribe/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value
+                },
+                body: `email=${encodeURIComponent(email)}`
+            });
+            
+            const data = await response.json();
+            
+            if (data.success || data.message) {
+                messageDiv.innerHTML = `<span style="color: #28a745;">${data.message}</span>`;
+                form.reset();
+            } else if (data.error) {
+                messageDiv.innerHTML = `<span style="color: #dc3545;">${data.error}</span>`;
+            }
+        } catch (error) {
+            messageDiv.innerHTML = '<span style="color: #dc3545;">An error occurred. Please try again.</span>';
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Subscribe';
+        }
+    });
+    </script>
+    
+    <style>
+    .subscribe-form {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+    
+    .subscribe-input {
+        flex: 1;
+        padding: 0.5rem 0.75rem;
+        border: 2px solid var(--border-color, #e0e0e0);
+        border-radius: 6px;
+        font-size: 0.875rem;
+        background: var(--surface-color, #fff);
+        color: var(--text-primary, #1a1a1a);
+    }
+    
+    .dark-mode .subscribe-input {
+        background: #2a2a2a;
+        border-color: #3a3a3a;
+        color: #fff;
+    }
+    
+    .subscribe-input:focus {
+        outline: none;
+        border-color: #3D2817;
+    }
+    
+    .subscribe-btn {
+        padding: 0.5rem 1rem;
+        background: #3D2817;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+    }
+    
+    .subscribe-btn:hover:not(:disabled) {
+        background: #2d1f10;
+        transform: translateY(-1px);
+    }
+    
+    .subscribe-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+    
+    @media (max-width: 768px) {
+        .subscribe-form {
+            flex-direction: column;
+        }
+        
+        .subscribe-btn {
+            width: 100%;
+        }
+    }
+    </style>
     
     {% block extra_js %}{% endblock %}
 </body>
