@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block title %}About - Igbo Archives{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <h1 class="mb-4">About Igbo Archives</h1>
+            
+            <div class="mt-4">
+                <h2>Our Vision</h2>
+                <p>Igbo Archives is a digital platform dedicated to preserving and celebrating Igbo culture, history, and heritage. We believe that cultural preservation is essential for maintaining the rich traditions and knowledge of the Igbo people for future generations.</p>
+                
+                <h2>What We Do</h2>
+                <p>We provide a comprehensive platform for:</p>
+                <ul>
+                    <li><strong>Cultural Archives:</strong> A curated collection of Igbo artifacts, photographs, documents, and historical materials</li>
+                    <li><strong>Community Insights:</strong> A space for sharing personal stories, perspectives, and knowledge about Igbo culture</li>
+                    <li><strong>Book Reviews:</strong> Reviews and discussions of literature related to Igbo history and culture</li>
+                    <li><strong>AI Assistant:</strong> An intelligent chatbot to help explore and learn about Igbo heritage</li>
+                    <li><strong>Educational Resources:</strong> Materials for learning about Igbo traditions, language, and customs</li>
+                </ul>
+                
+                <h2>Our Mission</h2>
+                <p>To create the most comprehensive and accessible digital archive of Igbo cultural heritage, fostering education, research, and community engagement. We aim to:</p>
+                <ul>
+                    <li>Preserve historical and cultural materials for future generations</li>
+                    <li>Provide educational resources for learners worldwide</li>
+                    <li>Build a vibrant community of cultural enthusiasts and scholars</li>
+                    <li>Promote ethical sharing and proper attribution of cultural materials</li>
+                    <li>Support research and academic work in Igbo studies</li>
+                </ul>
+                
+                <h2>Our Commitment</h2>
+                <p>We are committed to:</p>
+                <ul>
+                    <li><strong>Authenticity:</strong> Ensuring accurate representation of Igbo culture and history</li>
+                    <li><strong>Respect:</strong> Honoring the traditions and wishes of the Igbo community</li>
+                    <li><strong>Transparency:</strong> Properly attributing all content and respecting copyright</li>
+                    <li><strong>Accessibility:</strong> Making cultural knowledge freely available to all</li>
+                    <li><strong>Community:</strong> Building a welcoming space for learning and sharing</li>
+                </ul>
+                
+                <h2>Get Involved</h2>
+                <p>You can contribute to Igbo Archives by:</p>
+                <ul>
+                    <li>Creating an account and sharing your knowledge</li>
+                    <li>Writing articles about Igbo culture and history</li>
+                    <li>Reviewing books and cultural materials</li>
+                    <li>Engaging in thoughtful discussions</li>
+                    <li>Sharing the platform with others interested in Igbo heritage</li>
+                </ul>
+                
+                <h2>Contact Us</h2>
+                <p>We'd love to hear from you! If you have questions, suggestions, or would like to contribute, please <a href="{% url 'core:contact' %}">contact us</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

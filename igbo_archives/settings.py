@@ -78,6 +78,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media',
                 'core.context_processors.pwa_settings',
+                'core.context_processors.monetization_settings',
             ],
         },
     },
@@ -124,10 +125,14 @@ AUTHENTICATION_BACKENDS = [
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'optional'
-ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
-ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = True
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
+ACCOUNT_FORMS = {
+    'signup': 'users.forms.CustomSignupForm',
+    'login': 'users.forms.CustomLoginForm',
+}
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
@@ -284,3 +289,47 @@ PUSH_NOTIFICATIONS_SETTINGS = {
 # VAPID Keys for Web Push (set these in environment variables)
 VAPID_PUBLIC_KEY = os.getenv('VAPID_PUBLIC_KEY', '')
 VAPID_PRIVATE_KEY = os.getenv('VAPID_PRIVATE_KEY', '')
+
+# ============================================
+# SEO CONFIGURATION (django-meta)
+# ============================================
+META_SITE_PROTOCOL = 'https'
+META_USE_OG_PROPERTIES = True
+META_USE_TWITTER_PROPERTIES = True
+META_USE_SCHEMAORG_PROPERTIES = True
+META_SITE_TYPE = 'website'
+META_SITE_NAME = 'Igbo Archives'
+META_DEFAULT_KEYWORDS = ['Igbo culture', 'Nigerian heritage', 'Igbo history', 'cultural preservation', 'Igbo language', 'African culture']
+META_INCLUDE_KEYWORDS = ['Igbo', 'archives', 'cultural', 'heritage', 'history']
+META_DEFAULT_IMAGE = '/static/images/logos/og-image.png'
+META_IMAGE_URL = '/static/images/logos/og-image.png'
+META_USE_SITES = True
+META_OG_NAMESPACES = ['og', 'fb']
+
+# ============================================
+# DATABASE BACKUP CONFIGURATION (django-dbbackup)
+# ============================================
+DBBACKUP_STORAGE = 'django.core.files.storage.FileSystemStorage'
+DBBACKUP_STORAGE_OPTIONS = {'location': BASE_DIR / 'backups'}
+DBBACKUP_CLEANUP_KEEP = 10
+DBBACKUP_CLEANUP_KEEP_MEDIA = 10
+DBBACKUP_DATE_FORMAT = '%Y-%m-%d-%H-%M-%S'
+DBBACKUP_FILENAME_TEMPLATE = 'igbo-archives-{datetime}.{extension}'
+DBBACKUP_MEDIA_FILENAME_TEMPLATE = 'igbo-archives-media-{datetime}.{extension}'
+
+# ============================================
+# MONETIZATION SETTINGS
+# ============================================
+# Google AdSense
+GOOGLE_ADSENSE_CLIENT_ID = os.getenv('GOOGLE_ADSENSE_CLIENT_ID', '')
+ENABLE_ADSENSE = bool(GOOGLE_ADSENSE_CLIENT_ID)
+
+# Donation Settings
+STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY', '')
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
+ENABLE_DONATIONS = bool(STRIPE_SECRET_KEY)
+
+# ============================================
+# INDEXNOW CONFIGURATION
+# ============================================
+INDEXNOW_API_KEY = os.getenv('INDEXNOW_API_KEY', '')

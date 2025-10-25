@@ -3,7 +3,7 @@
 {% block title %}New Message{% endblock %}
 
 {% block content %}
-<h2>New Message to {{ recipient.username }}</h2>
+<h2>New Message to {{ recipient.get_display_name }}</h2>
 
 <form method="post">
     {% csrf_token %}

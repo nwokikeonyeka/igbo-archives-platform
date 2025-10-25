@@ -21,6 +21,12 @@
     {% block extra_css %}{% endblock %}
     
     <meta name="description" content="{% block meta_description %}Igbo Archives - A platform for Igbo cultural preservation and community engagement{% endblock %}">
+    
+    {% if ENABLE_ADSENSE %}
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ GOOGLE_ADSENSE_CLIENT_ID }}"
+         crossorigin="anonymous"></script>
+    {% endif %}
 </head>
 <body>
     <button class="pwa-install-button" id="pwaInstallBtn" aria-label="Install App">
@@ -45,8 +51,8 @@
             <div class="user-menu">
                 {% if user.is_authenticated %}
                     <button class="profile-button" id="profileButton">
-                        <div class="profile-icon">{{ user.username|slice:":1"|upper }}</div>
-                        <span class="d-none d-sm-inline">{{ user.username }}</span>
+                        <div class="profile-icon">{{ user.get_display_name|slice:":1"|upper }}</div>
+                        <span class="d-none d-sm-inline">{{ user.get_display_name }}</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
                     
@@ -168,17 +174,20 @@
                     <a href="/contact/" class="footer-link">Contact Us</a>
                 </div>
                 
-                <!-- Customer Service -->
+                <!-- Connect -->
                 <div class="footer-section">
-                    <h3>Customer Service</h3>
+                    <h3>Connect</h3>
                     <a href="/ai-chat/" class="footer-link">
-                        <i class="fas fa-robot"></i> AI Support Chat
+                        <i class="fas fa-robot"></i> AI Assistant
                     </a>
-                    <a href="/help/" class="footer-link">
-                        <i class="fas fa-question-circle"></i> Help Center
+                    <a href="/donate/" class="footer-link">
+                        <i class="fas fa-heart"></i> Support Us
                     </a>
-                    <a href="/faq/" class="footer-link">
-                        <i class="fas fa-book-open"></i> FAQ
+                    <a href="/copyright/" class="footer-link">
+                        <i class="fas fa-copyright"></i> Copyright Policy
+                    </a>
+                    <a href="https://twitter.com/IgboArchives" class="footer-link" target="_blank">
+                        <i class="fab fa-twitter"></i> Follow Us
                     </a>
                 </div>
             </div>

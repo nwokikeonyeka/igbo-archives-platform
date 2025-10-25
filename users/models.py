@@ -8,7 +8,10 @@ class CustomUser(AbstractUser):
     social_links = models.JSONField(default=dict, blank=True)
     
     def __str__(self):
-        return self.username
+        return self.full_name or self.email or self.username
+    
+    def get_display_name(self):
+        return self.full_name or (self.email.split('@')[0] if self.email else self.username)
 
 class Thread(models.Model):
     participants = models.ManyToManyField(CustomUser, related_name='message_threads')
@@ -33,4 +36,4 @@ class Message(models.Model):
         ordering = ['created_at']
     
     def __str__(self) -> str:
-        return f"Message from {self.sender.username} in {self.thread.subject}"
+        return f"Message from {self.sender.get_display_name()} in {self.thread.subject}"
