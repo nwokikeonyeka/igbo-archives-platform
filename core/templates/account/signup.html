@@ -54,7 +54,7 @@
             <div class="form-group">
                 <label class="checkbox-label">
                     {{ form.accept_terms }}
-                    I agree to the <a href="{% url 'terms' %}" target="_blank">Terms of Service</a> and <a href="{% url 'privacy' %}" target="_blank">Privacy Policy</a>
+                    I agree to the <a href="{% url 'core:terms' %}" target="_blank">Terms of Service</a> and <a href="{% url 'core:privacy' %}" target="_blank">Privacy Policy</a>
                 </label>
                 {% if form.accept_terms.errors %}
                 <div class="form-error">{{ form.accept_terms.errors }}</div>
