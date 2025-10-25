@@ -14,7 +14,7 @@
     {% endif %}
     
     {% if user.is_authenticated and user == profile_user %}
-    <a href="{% url 'users:profile_edit' %}" class="btn btn-primary">Edit Profile</a>
+    <a href="{% url 'users:profile_edit' username=profile_user.username %}" class="btn btn-primary">Edit Profile</a>
     {% elif user.is_authenticated %}
     <a href="{% url 'users:compose' profile_user.username %}" class="btn btn-primary">Send Message</a>
     {% endif %}
