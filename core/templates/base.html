@@ -7,6 +7,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Igbo Archives - Preserving the Past, Inspiring the Future{% endblock %}</title>
     
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-HNZ18KM0B8"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      
+      gtag('config', 'G-HNZ18KM0B8');
+      gtag('config', 'AW-16576124028');
+    </script>
+    
     {% progressive_web_app_meta %}
     
     {% if VAPID_PUBLIC_KEY %}
