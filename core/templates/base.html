@@ -21,6 +21,12 @@
     {% block extra_css %}{% endblock %}
     
     <meta name="description" content="{% block meta_description %}Igbo Archives - A platform for Igbo cultural preservation and community engagement{% endblock %}">
+    
+    {% if ENABLE_ADSENSE %}
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ GOOGLE_ADSENSE_CLIENT_ID }}"
+         crossorigin="anonymous"></script>
+    {% endif %}
 </head>
 <body>
     <button class="pwa-install-button" id="pwaInstallBtn" aria-label="Install App">
@@ -173,6 +179,9 @@
                     <h3>Connect</h3>
                     <a href="/ai-chat/" class="footer-link">
                         <i class="fas fa-robot"></i> AI Assistant
+                    </a>
+                    <a href="/donate/" class="footer-link">
+                        <i class="fas fa-heart"></i> Support Us
                     </a>
                     <a href="/copyright/" class="footer-link">
                         <i class="fas fa-copyright"></i> Copyright Policy

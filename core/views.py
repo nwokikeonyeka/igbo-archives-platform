@@ -58,3 +58,7 @@ Message:
             messages.info(request, f'Email not configured. Your message: "{subject}" from {email} has been logged.')
     
     return render(request, 'core/pages/contact.html')
+
+def donate(request):
+    """Donation page"""
+    return render(request, 'core/donate.html')

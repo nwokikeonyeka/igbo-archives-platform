@@ -1,10 +1,33 @@
 from django.contrib.sitemaps import Sitemap
+from django.urls import reverse
 from archives.models import Archive
 from insights.models import InsightPost
 from books.models import BookReview
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
+
+class StaticPagesSitemap(Sitemap):
+    """Sitemap for static/informational pages"""
+    priority = 0.8
+    changefreq = 'monthly'
+
+    def items(self):
+        return [
+            'core:home',
+            'core:about',
+            'core:privacy',
+            'core:terms',
+            'core:copyright',
+            'core:contact',
+            'ai_service:chat',
+            'academy:home',
+        ]
+
+    def location(self, item):
+        return reverse(item)
+
 
 class ArchiveSitemap(Sitemap):
     changefreq = "weekly"
