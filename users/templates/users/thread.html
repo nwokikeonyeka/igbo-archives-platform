@@ -8,7 +8,7 @@
 <div class="messages-container mb-4">
     {% for message in thread.messages.all %}
     <div class="message-bubble {% if message.sender == user %}text-end{% endif %}">
-        <strong>{{ message.sender.username }}</strong>
+        <strong>{{ message.sender.get_display_name }}</strong>
         <p>{{ message.content }}</p>
         <small class="text-muted">{{ message.created_at|date:"M d, Y g:i A" }}</small>
     </div>
