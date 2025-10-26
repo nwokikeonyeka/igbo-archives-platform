@@ -171,7 +171,7 @@ def upload_image(request):
         archive_type='image',
         image=image_file,
         uploaded_by=request.user,
-        status='approved'  # Auto-approve content images
+        is_approved=True  # Auto-approve content images
     )
     
     file_url = request.build_absolute_uri(archive.image.url)
