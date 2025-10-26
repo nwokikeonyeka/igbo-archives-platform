@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'archives.apps.ArchivesConfig',
     'insights.apps.InsightsConfig',
     'books.apps.BooksConfig',
-    'ai_service.apps.AiServiceConfig',
     'academy.apps.AcademyConfig',
 ]
 

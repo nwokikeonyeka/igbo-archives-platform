@@ -94,19 +94,23 @@ h4 { font-size: 1.5rem; margin-bottom: 0.875rem; }
 /* ============================================
    HEADER & NAVIGATION
    ============================================ */
-.main-header {
-    background: var(--bg-card);
-    border-bottom: 1px solid var(--border-color);
+.sticky-header-wrapper {
     position: sticky;
     top: 0;
     z-index: 1000;
+    background: var(--bg-card);
     box-shadow: 0 2px 20px var(--shadow);
     backdrop-filter: blur(10px);
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.main-header.shrink {
+.sticky-header-wrapper.shrink {
     box-shadow: 0 1px 10px var(--shadow);
+}
+
+.main-header {
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
 }
 
 .header-container {
@@ -120,7 +124,7 @@ h4 { font-size: 1.5rem; margin-bottom: 0.875rem; }
     transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.main-header.shrink .header-container {
+.sticky-header-wrapper.shrink .header-container {
     padding: 0.33rem 2rem;
 }
 
@@ -141,7 +145,7 @@ h4 { font-size: 1.5rem; margin-bottom: 0.875rem; }
     order: -1;
 }
 
-.main-header.shrink .dark-mode-toggle {
+.sticky-header-wrapper.shrink .dark-mode-toggle {
     width: 32px;
     height: 32px;
     font-size: 1rem;
@@ -169,7 +173,7 @@ h4 { font-size: 1.5rem; margin-bottom: 0.875rem; }
     transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
 }
 
-.main-header.shrink .logo-image {
+.sticky-header-wrapper.shrink .logo-image {
     height: 30px;
 }
 
@@ -208,8 +212,8 @@ body.dark-mode .logo-light { display: none; }
     gap: 0.5rem;
 }
 
-.main-header.shrink .profile-button,
-.main-header.shrink .login-button {
+.sticky-header-wrapper.shrink .profile-button,
+.sticky-header-wrapper.shrink .login-button {
     padding: 0.25rem 0.875rem;
     font-size: 0.9rem;
 }
@@ -234,7 +238,7 @@ body.dark-mode .logo-light { display: none; }
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.main-header.shrink .profile-icon {
+.sticky-header-wrapper.shrink .profile-icon {
     width: 26px;
     height: 26px;
     font-size: 0.85rem;
@@ -295,6 +299,11 @@ body.dark-mode .logo-light { display: none; }
     border-bottom: 1px solid var(--border-color);
     padding: 1rem 0;
     display: none;
+    transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sticky-header-wrapper.shrink .sub-nav {
+    padding: 0.5rem 0;
 }
 
 .sub-nav-container {
@@ -320,7 +329,7 @@ body.dark-mode .logo-light { display: none; }
     text-decoration: none;
     padding: 0.5rem 1rem;
     border-radius: 6px;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-size: 0.95rem;
     background: none;
     border: 1px solid var(--border-color);
@@ -328,6 +337,12 @@ body.dark-mode .logo-light { display: none; }
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.sticky-header-wrapper.shrink .sub-nav-link,
+.sticky-header-wrapper.shrink .sub-nav-button {
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
 }
 
 .sub-nav-link:hover, .sub-nav-button:hover {
@@ -370,6 +385,11 @@ body.dark-mode .logo-light { display: none; }
     align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 2rem;
+    transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sticky-header-wrapper.shrink .nav-container {
+    padding: 0.25rem 2rem;
 }
 
 .nav-link {
@@ -377,13 +397,18 @@ body.dark-mode .logo-light { display: none; }
     text-decoration: none;
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-weight: 500;
     font-size: 1rem;
     position: relative;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.sticky-header-wrapper.shrink .nav-link {
+    padding: 0.35rem 1rem;
+    font-size: 0.9rem;
 }
 
 .nav-link:hover {
