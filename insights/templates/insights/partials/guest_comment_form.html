@@ -1,4 +1,4 @@
-{% load recaptcha2 %}
+{# TODO: Phase 4 - Implement reCAPTCHA properly with django-recaptcha #}
 
 <div class="guest-comment-form mt-4">
     <h4>Leave a Comment</h4>
@@ -27,9 +27,7 @@
             <textarea class="form-control" id="id_comment" name="comment" rows="4" required></textarea>
         </div>
 
-        <div class="mb-3">
-            {% recaptcha_field %}
-        </div>
+        {# reCAPTCHA will be properly implemented in Phase 4 #}
 
         <button type="submit" class="btn btn-primary">Post Comment</button>
     </form>
