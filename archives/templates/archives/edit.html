@@ -3,19 +3,6 @@
 
 {% block title %}Edit {{ archive.title }} - Igbo Archives{% endblock %}
 
-{% block extra_css %}
-<script type="importmap">
-{
-    "imports": {
-        "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.js",
-        "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.3.1/"
-    }
-}
-</script>
-<script type="module" src="{% static 'django_ckeditor_5/dist/bundle.js' %}"></script>
-<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css">
-{% endblock %}
-
 {% block content %}
 <div class="container mt-4">
     <div class="row justify-content-center">
@@ -32,7 +19,8 @@
 
                 <div class="mb-3">
                     <label for="description" class="form-label">Description *</label>
-                    <textarea class="form-control" id="description" name="description" required>{{ archive.description }}</textarea>
+                    <textarea class="form-control" id="description" name="description" rows="6" required>{{ archive.description }}</textarea>
+                    <div class="form-text">Plain text description of the archive</div>
                 </div>
 
                 <div class="mb-3">
@@ -41,7 +29,7 @@
                         <option value="image" {% if archive.archive_type == 'image' %}selected{% endif %}>Image</option>
                         <option value="video" {% if archive.archive_type == 'video' %}selected{% endif %}>Video</option>
                         <option value="document" {% if archive.archive_type == 'document' %}selected{% endif %}>Document</option>
-                        <option value="artifact" {% if archive.archive_type == 'artifact' %}selected{% endif %}>Artifact</option>
+                        <option value="audio" {% if archive.archive_type == 'audio' %}selected{% endif %}>Audio</option>
                     </select>
                 </div>
 
@@ -57,7 +45,7 @@
 
                 {% if archive.image %}
                 <div class="mb-3">
-                    <label class="form-label">Current Image</label>
+                    <label class="form-label">Current Media File</label>
                     <div class="mb-2">
                         <img src="{{ archive.image.url }}" alt="{{ archive.alt_text }}" class="img-thumbnail" style="max-width: 300px;">
                     </div>
@@ -65,15 +53,26 @@
                 {% endif %}
 
                 <div class="mb-3">
-                    <label for="image" class="form-label">Image/File</label>
-                    <input type="file" class="form-control" id="image" name="image" accept=".jpg,.jpeg,.png,.webp">
-                    <div class="form-text">Leave empty to keep current image. Accepted formats: JPG, JPEG, PNG, WEBP</div>
+                    <label for="image" class="form-label">Media File</label>
+                    <input type="file" class="form-control" id="image" name="image">
+                    <div class="form-text">Leave empty to keep current file. Accepted: JPG, PNG, WEBP, MP4, PDF, etc.</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="caption" class="form-label">Caption (with copyright/source info) *</label>
+                    <input type="text" class="form-control" id="caption" name="caption" value="{{ archive.caption }}" required>
+                    <div class="form-text">Must include copyright or source information</div>
                 </div>
 
                 <div class="mb-3">
                     <label for="alt_text" class="form-label">Image Description (Alt Text) *</label>
                     <input type="text" class="form-control" id="alt_text" name="alt_text" value="{{ archive.alt_text }}" required>
-                    <div class="form-text">Describe the image for accessibility</div>
+                    <div class="form-text">Describe the content for accessibility</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location (Optional)</label>
+                    <input type="text" class="form-control" id="location" name="location" value="{{ archive.location }}">
                 </div>
 
                 <div class="mb-3">
@@ -83,8 +82,7 @@
 
                 <div class="mb-3">
                     <label for="tags" class="form-label">Tags</label>
-                    <input type="text" class="form-control" id="tags" name="tags" value="{% for tag in archive.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}" placeholder="Enter tags separated by commas">
-                    <div class="form-text">e.g., mask, ceremony, traditional</div>
+                    <input type="text" class="form-control" id="tags" name="tags" value="{% for tag in archive.tags.all %}{{ tag.name }}{% if not forloop.last %}, {% endif %}{% endfor %}" placeholder="mask, ceremony, traditional">
                 </div>
 
                 <div class="d-grid gap-2">
@@ -95,17 +93,4 @@
         </div>
     </div>
 </div>
-
-<script type="module">
-import { ClassicEditor, Bold, Essentials, Italic, Paragraph, Link, List, Heading, BlockQuote } from 'ckeditor5';
-
-ClassicEditor
-    .create( document.querySelector( '#description' ), {
-        plugins: [ Essentials, Bold, Italic, Paragraph, Link, List, Heading, BlockQuote ],
-        toolbar: [ 'heading', '|', 'bold', 'italic', 'link', '|', 'bulletedList', 'numberedList', 'blockQuote' ]
-    } )
-    .catch( error => {
-        console.error( error );
-    } );
-</script>
 {% endblock %}

@@ -133,20 +133,28 @@ def archive_media_browser(request):
 @require_http_methods(["POST"])
 def upload_image(request):
     """
-    Handle image uploads from Editor.js Image tool.
-    Validates file size and type, enforces metadata requirements.
+    Handle image uploads from Quill editor.
+    Automatically creates Archive entry with caption and description.
     """
     if 'image' not in request.FILES:
         return JsonResponse({'success': 0, 'error': 'No image file provided'})
     
     image_file = request.FILES['image']
+    caption = request.POST.get('caption', '').strip()
+    description = request.POST.get('description', '').strip()
+    
+    # Validate required metadata
+    if not caption:
+        return JsonResponse({'success': 0, 'error': 'Caption with copyright/source info is required'})
+    if not description:
+        return JsonResponse({'success': 0, 'error': 'Image description (alt text) is required'})
     
     # Validate file size (2-5MB)
     file_size = image_file.size
     if file_size > 5 * 1024 * 1024:
         return JsonResponse({'success': 0, 'error': 'Maximum file size is 5MB'})
-    if file_size < 2 * 1024 * 1024:
-        return JsonResponse({'success': 0, 'error': 'Minimum file size is 2MB for quality'})
+    if file_size < 1024:  # Minimum 1KB for sanity check
+        return JsonResponse({'success': 0, 'error': 'File too small'})
     
     # Validate file type
     allowed_extensions = ['jpg', 'jpeg', 'png', 'webp']
@@ -154,9 +162,19 @@ def upload_image(request):
     if file_extension not in allowed_extensions:
         return JsonResponse({'success': 0, 'error': f'Only {", ".join(allowed_extensions)} files are allowed'})
     
-    # Save the file
-    file_path = default_storage.save(f'uploads/{image_file.name}', image_file)
-    file_url = default_storage.url(file_path)
+    # Create Archive entry automatically
+    archive = Archive.objects.create(
+        title=f"Content Image: {os.path.splitext(image_file.name)[0]}",
+        description=description,
+        caption=caption,
+        alt_text=description,
+        archive_type='image',
+        image=image_file,
+        uploaded_by=request.user,
+        status='approved'  # Auto-approve content images
+    )
+    
+    file_url = request.build_absolute_uri(archive.image.url)
     
     return JsonResponse({
         'success': 1,
@@ -164,7 +182,8 @@ def upload_image(request):
             'url': file_url,
             'size': file_size,
             'name': image_file.name,
-        }
+        },
+        'archive_id': archive.id
     })
 
 
