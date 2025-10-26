@@ -6,6 +6,8 @@ from django.core.paginator import Paginator
 from django.utils.text import slugify
 
 def book_list(request):
+    from taggit.models import Tag
+    
     reviews = BookReview.objects.filter(is_published=True)
     
     search = request.GET.get('search')
@@ -18,7 +20,7 @@ def book_list(request):
     
     rating = request.GET.get('rating')
     if rating:
-        reviews = reviews.filter(rating=rating)
+        reviews = reviews.filter(rating__gte=int(rating))
     
     sort = request.GET.get('sort', '-created_at')
     reviews = reviews.order_by(sort)
@@ -27,10 +29,17 @@ def book_list(request):
     page = request.GET.get('page')
     reviews = paginator.get_page(page)
     
-    if request.htmx:
-        return render(request, 'books/partials/book_grid.html', {'reviews': reviews})
+    tags = Tag.objects.filter(bookreview__isnull=False).distinct()
     
-    return render(request, 'books/list.html', {'reviews': reviews})
+    context = {
+        'reviews': reviews,
+        'tags': tags
+    }
+    
+    if request.htmx:
+        return render(request, 'books/partials/book_grid.html', context)
+    
+    return render(request, 'books/list.html', context)
 
 def book_detail(request, slug):
     review = get_object_or_404(BookReview, slug=slug, is_published=True)

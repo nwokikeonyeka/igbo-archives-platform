@@ -4,47 +4,50 @@
 {% block title %}Cultural Archives - Igbo Archives{% endblock %}
 
 {% block sub_navigation %}
-<nav class="sub-nav" style="display: block;">
-    <div class="sub-nav-container">
-        <span class="sub-nav-label">Filter:</span>
+<nav class="filter-nav">
+    <div class="filter-container">
+        <div class="filter-group">
+            <select class="filter-select" id="categoryFilter" name="category"
+                    hx-get="{% url 'archives:list' %}"
+                    hx-target="#archiveGrid"
+                    hx-include="#typeFilter,#sortFilter,#searchInput"
+                    hx-push-url="true">
+                <option value="">All Categories</option>
+                {% for cat in categories %}
+                <option value="{{ cat.slug }}" {% if request.GET.category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
         
-        <button class="sub-nav-button {% if not request.GET.type %}active{% endif %}"
-                hx-get="{% url 'archives:list' %}?category={{ request.GET.category|default:'' }}&sort={{ request.GET.sort|default:'' }}&search={{ request.GET.search|default:'' }}"
-                hx-target="#archiveGrid"
-                hx-push-url="true">
-            <i class="fas fa-th"></i> All
-        </button>
+        <div class="filter-group">
+            <select class="filter-select" id="typeFilter" name="type"
+                    hx-get="{% url 'archives:list' %}"
+                    hx-target="#archiveGrid"
+                    hx-include="#categoryFilter,#sortFilter,#searchInput"
+                    hx-push-url="true">
+                <option value="">All Types</option>
+                <option value="image" {% if request.GET.type == 'image' %}selected{% endif %}>Images</option>
+                <option value="video" {% if request.GET.type == 'video' %}selected{% endif %}>Videos</option>
+                <option value="document" {% if request.GET.type == 'document' %}selected{% endif %}>Documents</option>
+                <option value="artifact" {% if request.GET.type == 'artifact' %}selected{% endif %}>Artifacts</option>
+            </select>
+        </div>
         
-        <button class="sub-nav-button {% if request.GET.type == 'image' %}active{% endif %}"
-                hx-get="{% url 'archives:list' %}?type=image&category={{ request.GET.category|default:'' }}&sort={{ request.GET.sort|default:'' }}&search={{ request.GET.search|default:'' }}"
-                hx-target="#archiveGrid"
-                hx-push-url="true">
-            <i class="fas fa-image"></i> Images
-        </button>
+        <div class="filter-group">
+            <select class="filter-select" id="sortFilter" name="sort"
+                    hx-get="{% url 'archives:list' %}"
+                    hx-target="#archiveGrid"
+                    hx-include="#categoryFilter,#typeFilter,#searchInput"
+                    hx-push-url="true">
+                <option value="-created_at" {% if request.GET.sort == '-created_at' or not request.GET.sort %}selected{% endif %}>Newest First</option>
+                <option value="created_at" {% if request.GET.sort == 'created_at' %}selected{% endif %}>Oldest First</option>
+                <option value="-is_featured" {% if request.GET.sort == '-is_featured' %}selected{% endif %}>Featured</option>
+            </select>
+        </div>
         
-        <button class="sub-nav-button {% if request.GET.type == 'video' %}active{% endif %}"
-                hx-get="{% url 'archives:list' %}?type=video&category={{ request.GET.category|default:'' }}&sort={{ request.GET.sort|default:'' }}&search={{ request.GET.search|default:'' }}"
-                hx-target="#archiveGrid"
-                hx-push-url="true">
-            <i class="fas fa-video"></i> Videos
-        </button>
-        
-        <button class="sub-nav-button {% if request.GET.type == 'document' %}active{% endif %}"
-                hx-get="{% url 'archives:list' %}?type=document&category={{ request.GET.category|default:'' }}&sort={{ request.GET.sort|default:'' }}&search={{ request.GET.search|default:'' }}"
-                hx-target="#archiveGrid"
-                hx-push-url="true">
-            <i class="fas fa-file-alt"></i> Documents
-        </button>
-        
-        <button class="sub-nav-button {% if request.GET.type == 'artifact' %}active{% endif %}"
-                hx-get="{% url 'archives:list' %}?type=artifact&category={{ request.GET.category|default:'' }}&sort={{ request.GET.sort|default:'' }}&search={{ request.GET.search|default:'' }}"
-                hx-target="#archiveGrid"
-                hx-push-url="true">
-            <i class="fas fa-cube"></i> Artifacts
-        </button>
-        
-        <div class="sub-nav-search">
+        <div class="filter-group filter-search">
             <input type="text" 
+                   class="filter-search-input"
                    placeholder="Search archives..." 
                    id="searchInput"
                    name="search"
@@ -54,8 +57,15 @@
                    hx-target="#archiveGrid"
                    hx-include="#categoryFilter,#typeFilter,#sortFilter"
                    hx-push-url="true">
-            <button class="btn btn-primary" style="padding: 0.5rem 1.25rem;">
-                <i class="fas fa-search"></i>
+            <i class="fas fa-search filter-search-icon"></i>
+        </div>
+        
+        <div class="filter-group view-toggle">
+            <button type="button" class="view-btn active" id="gridViewBtn" onclick="toggleArchiveView('grid'); return false;" title="Grid View">
+                <i class="fas fa-th"></i>
+            </button>
+            <button type="button" class="view-btn" id="listViewBtn" onclick="toggleArchiveView('list'); return false;" title="List View">
+                <i class="fas fa-list"></i>
             </button>
         </div>
     </div>
@@ -63,142 +73,10 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-    <!-- Featured Carousel -->
-    {% if featured %}
-    <div id="featuredCarousel" class="carousel slide mb-5" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-            {% for item in featured %}
-            <button type="button" data-bs-target="#featuredCarousel" data-bs-slide-to="{{ forloop.counter0 }}" {% if forloop.first %}class="active"{% endif %}></button>
-            {% endfor %}
-        </div>
-        <div class="carousel-inner">
-            {% for item in featured %}
-            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <img src="{{ item.image.url }}" class="d-block w-100" alt="{{ item.alt_text }}" style="max-height: 400px; object-fit: cover;">
-                <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 p-3 rounded">
-                    <h5>{{ item.title }}</h5>
-                    <p>{{ item.description|truncatewords:20 }}</p>
-                    <a href="{% url 'archives:detail' item.pk %}" class="btn btn-sm btn-primary">View Details</a>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#featuredCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#featuredCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-        </button>
-    </div>
-    {% endif %}
-
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h2>Browse Archives</h2>
-        </div>
-        <div class="col-md-4 text-end">
-            <a href="{% url 'archives:create' %}" class="btn btn-primary">
-                <i class="bi bi-plus-circle"></i> Upload Archive
-            </a>
-        </div>
-    </div>
-
-    <!-- Filters and View Toggle -->
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="filter-controls">
-                <div class="row g-2">
-                    <div class="col-md-4">
-                        <select class="form-select" id="categoryFilter"
-                                hx-get="{% url 'archives:list' %}"
-                                hx-target="#archiveGrid"
-                                hx-include="#typeFilter,#sortFilter,#searchInput"
-                                hx-push-url="true">
-                            <option value="">All Categories</option>
-                            {% for cat in categories %}
-                            <option value="{{ cat.slug }}" {% if request.GET.category == cat.slug %}selected{% endif %}>{{ cat.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" id="typeFilter"
-                                hx-get="{% url 'archives:list' %}"
-                                hx-target="#archiveGrid"
-                                hx-include="#categoryFilter,#sortFilter,#searchInput"
-                                hx-push-url="true">
-                            <option value="">All Types</option>
-                            <option value="image" {% if request.GET.type == 'image' %}selected{% endif %}>Images</option>
-                            <option value="video" {% if request.GET.type == 'video' %}selected{% endif %}>Videos</option>
-                            <option value="document" {% if request.GET.type == 'document' %}selected{% endif %}>Documents</option>
-                            <option value="artifact" {% if request.GET.type == 'artifact' %}selected{% endif %}>Artifacts</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select" id="sortFilter"
-                                hx-get="{% url 'archives:list' %}"
-                                hx-target="#archiveGrid"
-                                hx-include="#categoryFilter,#typeFilter,#searchInput"
-                                hx-push-url="true">
-                            <option value="-created_at">Newest First</option>
-                            <option value="created_at" {% if request.GET.sort == 'created_at' %}selected{% endif %}>Oldest First</option>
-                            <option value="title" {% if request.GET.sort == 'title' %}selected{% endif %}>Title A-Z</option>
-                            <option value="-title" {% if request.GET.sort == '-title' %}selected{% endif %}>Title Z-A</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search..."
-                               hx-get="{% url 'archives:list' %}"
-                               hx-trigger="keyup changed delay:500ms"
-                               hx-target="#archiveGrid"
-                               hx-include="#categoryFilter,#typeFilter,#sortFilter"
-                               hx-push-url="true"
-                               value="{{ request.GET.search }}">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 text-end">
-            <div class="btn-group" role="group">
-                <button type="button" class="btn btn-outline-secondary active" id="gridViewBtn" onclick="toggleView('grid')">
-                    <i class="bi bi-grid-3x3-gap"></i> Grid
-                </button>
-                <button type="button" class="btn btn-outline-secondary" id="listViewBtn" onclick="toggleView('list')">
-                    <i class="bi bi-list-ul"></i> List
-                </button>
-            </div>
-        </div>
-    </div>
-
+<div class="content-container">
     <!-- Archive Grid/List -->
-    <div id="archiveGrid">
+    <div id="archiveGrid" class="archive-view-grid">
         {% include "archives/partials/archive_grid.html" %}
     </div>
 </div>
-
-<script>
-function toggleView(view) {
-    const grid = document.getElementById('archiveGrid');
-    const gridBtn = document.getElementById('gridViewBtn');
-    const listBtn = document.getElementById('listViewBtn');
-    
-    if (view === 'grid') {
-        grid.className = 'row row-cols-1 row-cols-md-3 g-4';
-        gridBtn.classList.add('active');
-        listBtn.classList.remove('active');
-        localStorage.setItem('archiveView', 'grid');
-    } else {
-        grid.className = 'list-group';
-        gridBtn.classList.remove('active');
-        listBtn.classList.add('active');
-        localStorage.setItem('archiveView', 'list');
-    }
-}
-
-// Restore saved view preference
-document.addEventListener('DOMContentLoaded', function() {
-    const savedView = localStorage.getItem('archiveView') || 'grid';
-    toggleView(savedView);
-});
-</script>
 {% endblock %}

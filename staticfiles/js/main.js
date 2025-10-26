@@ -62,20 +62,123 @@ function copyToClipboard(text) {
     });
 }
 
-function toggleView(view) {
-    const container = document.querySelector('.archive-container');
+
+let currentSlide = 0;
+let autoPlayInterval;
+
+function moveCarousel(direction) {
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('.carousel-dot');
+    
+    if (slides.length === 0) return;
+    
+    slides[currentSlide].classList.remove('active');
+    dots[currentSlide].classList.remove('active');
+    
+    currentSlide = (currentSlide + direction + slides.length) % slides.length;
+    
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide].classList.add('active');
+    
+    resetAutoPlay();
+}
+
+function goToSlide(index) {
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('.carousel-dot');
+    
+    if (slides.length === 0) return;
+    
+    slides[currentSlide].classList.remove('active');
+    dots[currentSlide].classList.remove('active');
+    
+    currentSlide = index;
+    
+    slides[currentSlide].classList.add('active');
+    dots[currentSlide].classList.add('active');
+    
+    resetAutoPlay();
+}
+
+function autoPlayCarousel() {
+    const slides = document.querySelectorAll('.carousel-slide');
+    if (slides.length > 1) {
+        autoPlayInterval = setInterval(() => {
+            moveCarousel(1);
+        }, 5000);
+    }
+}
+
+function resetAutoPlay() {
+    if (autoPlayInterval) {
+        clearInterval(autoPlayInterval);
+    }
+    autoPlayCarousel();
+}
+
+function toggleArchiveView(view) {
+    let container = document.getElementById('archiveGrid') || 
+                    document.getElementById('insightsGrid') || 
+                    document.getElementById('reviewsGrid');
+    
+    const gridBtn = document.getElementById('gridViewBtn');
+    const listBtn = document.getElementById('listViewBtn');
+    
     if (!container) return;
     
+    const pageType = container.id.replace('Grid', '');
+    
     if (view === 'grid') {
-        container.classList.remove('archive-list');
-        container.classList.add('archive-grid');
+        container.className = 'archive-view-grid';
+        gridBtn?.classList.add('active');
+        listBtn?.classList.remove('active');
+        localStorage.setItem(pageType + 'View', 'grid');
     } else {
-        container.classList.remove('archive-grid');
-        container.classList.add('archive-list');
+        container.className = 'archive-view-list';
+        gridBtn?.classList.remove('active');
+        listBtn?.classList.add('active');
+        localStorage.setItem(pageType + 'View', 'list');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    const carousel = document.getElementById('featuredCarousel');
+    if (carousel) {
+        autoPlayCarousel();
+        
+        carousel.addEventListener('mouseenter', () => {
+            if (autoPlayInterval) {
+                clearInterval(autoPlayInterval);
+            }
+        });
+        
+        carousel.addEventListener('mouseleave', () => {
+            autoPlayCarousel();
+        });
     }
     
-    document.querySelectorAll('.view-toggle button').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    event.target.classList.add('active');
-}
+    let container = document.getElementById('archiveGrid') || 
+                    document.getElementById('insightsGrid') || 
+                    document.getElementById('reviewsGrid');
+    
+    if (container) {
+        const pageType = container.id.replace('Grid', '');
+        const savedView = localStorage.getItem(pageType + 'View') || 'grid';
+        toggleArchiveView(savedView);
+    }
+    
+    let lastScrollTop = 0;
+    const header = document.querySelector('.sticky-header-wrapper');
+    
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollTop > 100) {
+            header?.classList.add('shrink');
+        } else {
+            header?.classList.remove('shrink');
+        }
+        
+        lastScrollTop = scrollTop;
+    }, { passive: true });
+});

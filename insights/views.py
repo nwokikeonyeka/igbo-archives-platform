@@ -7,6 +7,8 @@ from django.core.paginator import Paginator
 from django.utils.text import slugify
 
 def insight_list(request):
+    from taggit.models import Tag
+    
     insights = InsightPost.objects.filter(is_published=True, is_approved=True)
     
     search = request.GET.get('search')
@@ -22,12 +24,19 @@ def insight_list(request):
     
     paginator = Paginator(insights, 12)
     page = request.GET.get('page')
-    insights = paginator.get_page(page)
+    posts = paginator.get_page(page)
+    
+    tags = Tag.objects.filter(insightpost__isnull=False).distinct()
+    
+    context = {
+        'posts': posts,
+        'tags': tags
+    }
     
     if request.htmx:
-        return render(request, 'insights/partials/insight_grid.html', {'insights': insights})
+        return render(request, 'insights/partials/insight_grid.html', context)
     
-    return render(request, 'insights/list.html', {'insights': insights})
+    return render(request, 'insights/list.html', context)
 
 def insight_detail(request, slug):
     insight = get_object_or_404(InsightPost, slug=slug, is_published=True)

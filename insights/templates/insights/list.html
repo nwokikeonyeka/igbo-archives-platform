@@ -4,23 +4,36 @@
 {% block title %}Community Insights - Igbo Archives{% endblock %}
 
 {% block sub_navigation %}
-<nav class="sub-nav" style="display: block;">
-    <div class="sub-nav-container">
-        <span class="sub-nav-label">Category:</span>
+<nav class="filter-nav">
+    <div class="filter-container">
+        <div class="filter-group">
+            <select class="filter-select" id="tagFilter" name="tag"
+                    hx-get="{% url 'insights:list' %}"
+                    hx-target="#insightsGrid"
+                    hx-include="#sortFilter,#searchInput"
+                    hx-push-url="true">
+                <option value="">All Tags</option>
+                {% for tag in tags %}
+                <option value="{{ tag.name }}" {% if request.GET.tag == tag.name %}selected{% endif %}>{{ tag.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
         
-        <a href="{% url 'insights:list' %}" class="sub-nav-link {% if not request.GET.category %}active{% endif %}">
-            <i class="fas fa-th"></i> All
-        </a>
+        <div class="filter-group">
+            <select class="filter-select" id="sortFilter" name="sort"
+                    hx-get="{% url 'insights:list' %}"
+                    hx-target="#insightsGrid"
+                    hx-include="#tagFilter,#searchInput"
+                    hx-push-url="true">
+                <option value="-created_at" {% if request.GET.sort == '-created_at' or not request.GET.sort %}selected{% endif %}>Newest First</option>
+                <option value="created_at" {% if request.GET.sort == 'created_at' %}selected{% endif %}>Oldest First</option>
+                <option value="title" {% if request.GET.sort == 'title' %}selected{% endif %}>Title A-Z</option>
+            </select>
+        </div>
         
-        {% for category in categories %}
-        <a href="{% url 'insights:list' %}?category={{ category.slug }}" 
-           class="sub-nav-link {% if request.GET.category == category.slug %}active{% endif %}">
-            <i class="fas fa-tag"></i> {{ category.name }}
-        </a>
-        {% endfor %}
-        
-        <div class="sub-nav-search">
+        <div class="filter-group filter-search">
             <input type="text" 
+                   class="filter-search-input"
                    placeholder="Search insights..." 
                    id="searchInput"
                    name="search"
@@ -28,9 +41,17 @@
                    hx-get="{% url 'insights:list' %}"
                    hx-trigger="keyup changed delay:500ms"
                    hx-target="#insightsGrid"
+                   hx-include="#tagFilter,#sortFilter"
                    hx-push-url="true">
-            <button class="btn btn-primary" style="padding: 0.5rem 1.25rem;">
-                <i class="fas fa-search"></i>
+            <i class="fas fa-search filter-search-icon"></i>
+        </div>
+        
+        <div class="filter-group view-toggle">
+            <button type="button" class="view-btn active" id="gridViewBtn" onclick="toggleArchiveView('grid'); return false;" title="Grid View">
+                <i class="fas fa-th"></i>
+            </button>
+            <button type="button" class="view-btn" id="listViewBtn" onclick="toggleArchiveView('list'); return false;" title="List View">
+                <i class="fas fa-list"></i>
             </button>
         </div>
     </div>
@@ -38,56 +59,10 @@
 {% endblock %}
 
 {% block content %}
-<div class="container-main">
-    <!-- Header -->
-    <div class="row align-items-center mb-4">
-        <div class="col-md-8">
-            <h1>Community Insights</h1>
-            <p class="text-muted">Share your thoughts, stories, and perspectives on Igbo culture</p>
-        </div>
-        <div class="col-md-4 text-end">
-            <a href="{% url 'insights:create' %}" class="btn btn-primary">
-                <i class="fas fa-pen"></i> Write Insight
-            </a>
-        </div>
-    </div>
-
+<div class="content-container">
     <!-- Insights Grid -->
-    <div class="archive-grid" id="insightsGrid">
-        {% if posts %}
-            {% for post in posts %}
-            <div class="card">
-                {% if post.featured_image %}
-                <img src="{{ post.featured_image.url }}" class="card-img-top" alt="{{ post.title }}">
-                {% endif %}
-                <div class="card-body">
-                    <h3 class="card-title">{{ post.title }}</h3>
-                    <div class="d-flex align-items-center gap-2 mb-2">
-                        <span class="text-muted">
-                            <i class="fas fa-user"></i> {{ post.author.get_full_name|default:post.author.username }}
-                        </span>
-                        <span class="text-muted">
-                            <i class="fas fa-calendar"></i> {{ post.created_at|date:"M d, Y" }}
-                        </span>
-                    </div>
-                    {% if post.category %}
-                    <span class="badge bg-accent mb-2">{{ post.category.name }}</span>
-                    {% endif %}
-                    <p class="card-text">{{ post.content|striptags|truncatewords:30 }}</p>
-                    <a href="{% url 'insights:detail' post.slug %}" class="btn btn-secondary btn-sm">
-                        Read More <i class="fas fa-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-            {% endfor %}
-        {% else %}
-            <div class="col-12">
-                <div class="alert alert-info">
-                    <h4>No insights found</h4>
-                    <p>Be the first to share your perspective! <a href="{% url 'insights:create' %}">Write an insight</a></p>
-                </div>
-            </div>
-        {% endif %}
+    <div id="insightsGrid" class="archive-view-grid">
+        {% include "insights/partials/insight_grid.html" %}
     </div>
 </div>
 {% endblock %}
