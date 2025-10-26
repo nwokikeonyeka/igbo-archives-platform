@@ -149,7 +149,7 @@ def upload_image(request):
     if not description:
         return JsonResponse({'success': 0, 'error': 'Image description (alt text) is required'})
     
-    # Validate file size (2-5MB)
+    # Validate file size (Max 5MB)
     file_size = image_file.size
     if file_size > 5 * 1024 * 1024:
         return JsonResponse({'success': 0, 'error': 'Maximum file size is 5MB'})

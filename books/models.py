@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 User = get_user_model()
 
 def validate_file_size(file):
-    """Validate file size - images should be 2-5MB"""
+    """Validate file size - images should be Max 5MB"""
     file_size = file.size
     max_mb = 5
     min_mb = 2

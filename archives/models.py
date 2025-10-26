@@ -7,7 +7,7 @@ from django.core.exceptions import ValidationError
 User = get_user_model()
 
 def validate_image_size(file):
-    """Validate image file size - 2-5MB"""
+    """Validate image file size - Max 5MB"""
     file_size = file.size
     max_mb = 5
     min_mb = 2
@@ -24,7 +24,7 @@ def validate_video_size(file):
         raise ValidationError(f'Maximum video file size is {limit_mb}MB')
 
 def validate_document_size(file):
-    """Validate document file size - 2-5MB"""
+    """Validate document file size - Max 5MB"""
     file_size = file.size
     max_mb = 5
     min_mb = 2
@@ -34,7 +34,7 @@ def validate_document_size(file):
         raise ValidationError(f'Minimum document file size is {min_mb}MB')
 
 def validate_audio_size(file):
-    """Validate audio file size - 2-5MB"""
+    """Validate audio file size - Max 5MB"""
     file_size = file.size
     max_mb = 5
     min_mb = 2

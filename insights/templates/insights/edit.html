@@ -109,9 +109,7 @@
 
 <script>
 let selectedFeaturedImage = null;
-{% if insight.featured_image %}
-selectedFeaturedImage = "{{ insight.featured_image.url }}";
-{% endif %}
+{% if insight.featured_image %}selectedFeaturedImage = "{{ insight.featured_image.url }}";{% endif %}
 
 var quill = new Quill('#editor', {
     theme: 'snow',

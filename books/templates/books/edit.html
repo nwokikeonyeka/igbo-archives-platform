@@ -71,7 +71,7 @@
                 <div class="mb-3">
                     <label for="cover_image" class="form-label">Book Cover Image</label>
                     <input type="file" class="form-control" id="cover_image" name="cover_image" accept="image/*">
-                    <div class="form-text">Leave empty to keep current image (2-5MB)</div>
+                    <div class="form-text">Leave empty to keep current image (Max 5MB)</div>
                 </div>
 
                 <div class="mb-3">
@@ -126,14 +126,27 @@ quill.getModule('toolbar').addHandler('image', function() {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', 'image/*');
-    input.click();
-
+    
     input.onchange = async function() {
         const file = input.files[0];
         if (!file) return;
+        
+        const caption = prompt('Enter caption with copyright/source info (required):');
+        if (!caption || !caption.trim()) {
+            alert('Caption is required');
+            return;
+        }
+        
+        const description = prompt('Enter image description for accessibility (required):');
+        if (!description || !description.trim()) {
+            alert('Description is required');
+            return;
+        }
 
         const formData = new FormData();
         formData.append('image', file);
+        formData.append('caption', caption.trim());
+        formData.append('description', description.trim());
         formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
 
         try {
@@ -153,6 +166,8 @@ quill.getModule('toolbar').addHandler('image', function() {
             alert('Upload failed: ' + error.message);
         }
     };
+    
+    input.click();
 });
 
 // Form submission
