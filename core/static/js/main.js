@@ -117,6 +117,8 @@ function resetAutoPlay() {
 }
 
 function toggleArchiveView(view) {
+    console.log('toggleArchiveView called with view:', view);
+    
     let container = document.getElementById('archiveGrid') || 
                     document.getElementById('insightsGrid') || 
                     document.getElementById('reviewsGrid');
@@ -124,7 +126,12 @@ function toggleArchiveView(view) {
     const gridBtn = document.getElementById('gridViewBtn');
     const listBtn = document.getElementById('listViewBtn');
     
-    if (!container) return;
+    if (!container) {
+        console.error('Container not found! Looking for: archiveGrid, insightsGrid, or reviewsGrid');
+        return;
+    }
+    
+    console.log('Container found:', container.id, 'Current class:', container.className);
     
     const pageType = container.id.replace('Grid', '');
     
@@ -133,11 +140,13 @@ function toggleArchiveView(view) {
         gridBtn?.classList.add('active');
         listBtn?.classList.remove('active');
         localStorage.setItem(pageType + 'View', 'grid');
+        console.log('Switched to GRID view');
     } else {
         container.className = 'archive-view-list';
         gridBtn?.classList.remove('active');
         listBtn?.classList.add('active');
         localStorage.setItem(pageType + 'View', 'list');
+        console.log('Switched to LIST view');
     }
 }
 
