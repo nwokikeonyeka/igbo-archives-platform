@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from taggit.managers import TaggableManager
-from django_editorjs import EditorJsField
+from django_editorjs_fields import EditorJsJSONField
 from django.core.validators import FileExtensionValidator
 from django.core.exceptions import ValidationError
 
@@ -10,9 +10,12 @@ User = get_user_model()
 def validate_file_size(file):
     """Validate file size - images should be 2-5MB"""
     file_size = file.size
-    limit_mb = 5
-    if file_size > limit_mb * 1024 * 1024:
-        raise ValidationError(f'Maximum file size is {limit_mb}MB')
+    max_mb = 5
+    min_mb = 2
+    if file_size > max_mb * 1024 * 1024:
+        raise ValidationError(f'Maximum file size is {max_mb}MB')
+    if file_size < min_mb * 1024 * 1024:
+        raise ValidationError(f'Minimum file size is {min_mb}MB for quality. Please use higher quality images.')
 
 class BookReview(models.Model):
     RATING_CHOICES = [(i, str(i)) for i in range(1, 6)]
@@ -27,7 +30,7 @@ class BookReview(models.Model):
     slug = models.SlugField(unique=True)
     
     # Editor.js JSON content (new block editor)
-    content_json = EditorJsField(
+    content_json = EditorJsJSONField(
         blank=True,
         null=True,
         help_text="Block-based review content using Editor.js"

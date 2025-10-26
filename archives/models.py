@@ -9,9 +9,12 @@ User = get_user_model()
 def validate_image_size(file):
     """Validate image file size - 2-5MB"""
     file_size = file.size
-    limit_mb = 5
-    if file_size > limit_mb * 1024 * 1024:
-        raise ValidationError(f'Maximum file size is {limit_mb}MB')
+    max_mb = 5
+    min_mb = 2
+    if file_size > max_mb * 1024 * 1024:
+        raise ValidationError(f'Maximum file size is {max_mb}MB')
+    if file_size < min_mb * 1024 * 1024:
+        raise ValidationError(f'Minimum file size is {min_mb}MB for quality. Please use higher quality images.')
 
 def validate_video_size(file):
     """Validate video file size - max 50MB"""
@@ -23,16 +26,22 @@ def validate_video_size(file):
 def validate_document_size(file):
     """Validate document file size - 2-5MB"""
     file_size = file.size
-    limit_mb = 5
-    if file_size > limit_mb * 1024 * 1024:
-        raise ValidationError(f'Maximum document file size is {limit_mb}MB')
+    max_mb = 5
+    min_mb = 2
+    if file_size > max_mb * 1024 * 1024:
+        raise ValidationError(f'Maximum document file size is {max_mb}MB')
+    if file_size < min_mb * 1024 * 1024:
+        raise ValidationError(f'Minimum document file size is {min_mb}MB')
 
 def validate_audio_size(file):
     """Validate audio file size - 2-5MB"""
     file_size = file.size
-    limit_mb = 5
-    if file_size > limit_mb * 1024 * 1024:
-        raise ValidationError(f'Maximum audio file size is {limit_mb}MB')
+    max_mb = 5
+    min_mb = 2
+    if file_size > max_mb * 1024 * 1024:
+        raise ValidationError(f'Maximum audio file size is {max_mb}MB')
+    if file_size < min_mb * 1024 * 1024:
+        raise ValidationError(f'Minimum audio file size is {min_mb}MB for quality')
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -115,11 +124,15 @@ class Archive(models.Model):
     
     # Metadata
     caption = models.CharField(
-        max_length=500, 
+        max_length=500,
+        blank=True,
+        default='',
         help_text="Required: Caption with copyright/source information"
     )
     alt_text = models.CharField(
-        max_length=255, 
+        max_length=255,
+        blank=True,
+        default='',
         help_text="Required for images: Alt text for accessibility"
     )
     

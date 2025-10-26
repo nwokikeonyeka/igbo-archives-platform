@@ -5,7 +5,7 @@ from .models import Archive, Category
 from django.core.paginator import Paginator
 
 def archive_list(request):
-    archives = Archive.objects.all()
+    archives = Archive.objects.filter(is_approved=True)
     
     category = request.GET.get('category')
     if category:
@@ -27,7 +27,7 @@ def archive_list(request):
     archives = paginator.get_page(page)
     
     categories = Category.objects.all()
-    featured = Archive.objects.filter(is_featured=True)[:5]
+    featured = Archive.objects.filter(is_featured=True, is_approved=True)[:5]
     
     context = {
         'archives': archives,
@@ -41,7 +41,7 @@ def archive_list(request):
     return render(request, 'archives/list.html', context)
 
 def archive_detail(request, pk):
-    archive = get_object_or_404(Archive, pk=pk)
+    archive = get_object_or_404(Archive, pk=pk, is_approved=True)
     return render(request, 'archives/detail.html', {'archive': archive})
 
 @login_required
@@ -51,27 +51,65 @@ def archive_create(request):
         description = request.POST.get('description')
         archive_type = request.POST.get('archive_type')
         category_id = request.POST.get('category')
-        alt_text = request.POST.get('alt_text')
+        caption = request.POST.get('caption')
+        alt_text = request.POST.get('alt_text', '')
+        original_author = request.POST.get('original_author', '')
+        location = request.POST.get('location', '')
         date_created = request.POST.get('date_created') or None
+        circa_date = request.POST.get('circa_date', '')
         
-        archive = Archive.objects.create(
+        # Validate required fields
+        if not title or not description or not archive_type or not caption:
+            messages.error(request, 'Please fill in all required fields.')
+            return redirect('archives:create')
+        
+        # Create archive instance
+        archive = Archive(
             title=title,
             description=description,
             archive_type=archive_type,
             category_id=category_id if category_id else None,
-            image=request.FILES.get('image'),
+            caption=caption,
             alt_text=alt_text,
+            original_author=original_author,
+            location=location,
             date_created=date_created,
-            uploaded_by=request.user
+            circa_date=circa_date,
+            uploaded_by=request.user,
+            is_approved=True  # Auto-approve for logged-in users, or set to False for admin approval
         )
         
-        tags = request.POST.get('tags', '').split(',')
-        for tag in tags:
-            if tag.strip():
-                archive.tags.add(tag.strip())
+        # Handle file uploads based on type
+        if archive_type == 'image' and request.FILES.get('image'):
+            archive.image = request.FILES['image']
+        elif archive_type == 'video' and request.FILES.get('video'):
+            archive.video = request.FILES['video']
+            if request.FILES.get('featured_image'):
+                archive.featured_image = request.FILES['featured_image']
+        elif archive_type == 'document' and request.FILES.get('document'):
+            archive.document = request.FILES['document']
+        elif archive_type == 'audio' and request.FILES.get('audio'):
+            archive.audio = request.FILES['audio']
+            if request.FILES.get('featured_image'):
+                archive.featured_image = request.FILES['featured_image']
+        else:
+            messages.error(request, f'Please upload a file for {archive_type} type.')
+            return redirect('archives:create')
         
-        messages.success(request, 'Archive uploaded successfully!')
-        return redirect('archives:detail', pk=archive.pk)
+        try:
+            archive.save()
+            
+            # Add tags
+            tags = request.POST.get('tags', '').split(',')
+            for tag in tags:
+                if tag.strip():
+                    archive.tags.add(tag.strip())
+            
+            messages.success(request, 'Archive uploaded successfully!')
+            return redirect('archives:detail', pk=archive.pk)
+        except Exception as e:
+            messages.error(request, f'Error uploading archive: {str(e)}')
+            return redirect('archives:create')
     
     categories = Category.objects.all()
     return render(request, 'archives/create.html', {'categories': categories})
@@ -85,11 +123,24 @@ def archive_edit(request, pk):
         archive.description = request.POST.get('description')
         archive.archive_type = request.POST.get('archive_type')
         archive.category_id = request.POST.get('category') if request.POST.get('category') else None
-        archive.alt_text = request.POST.get('alt_text')
+        archive.caption = request.POST.get('caption')
+        archive.alt_text = request.POST.get('alt_text', '')
+        archive.original_author = request.POST.get('original_author', '')
+        archive.location = request.POST.get('location', '')
         archive.date_created = request.POST.get('date_created') or None
+        archive.circa_date = request.POST.get('circa_date', '')
         
+        # Handle file uploads
         if request.FILES.get('image'):
-            archive.image = request.FILES.get('image')
+            archive.image = request.FILES['image']
+        if request.FILES.get('video'):
+            archive.video = request.FILES['video']
+        if request.FILES.get('document'):
+            archive.document = request.FILES['document']
+        if request.FILES.get('audio'):
+            archive.audio = request.FILES['audio']
+        if request.FILES.get('featured_image'):
+            archive.featured_image = request.FILES['featured_image']
         
         # Clear existing tags and add new ones
         archive.tags.clear()

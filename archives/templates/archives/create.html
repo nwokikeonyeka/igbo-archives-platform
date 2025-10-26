@@ -3,26 +3,13 @@
 
 {% block title %}Upload Archive - Igbo Archives{% endblock %}
 
-{% block extra_css %}
-<script type="importmap">
-{
-    "imports": {
-        "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.js",
-        "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.3.1/"
-    }
-}
-</script>
-<script type="module" src="{% static 'django_ckeditor_5/dist/bundle.js' %}"></script>
-<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css">
-{% endblock %}
-
 {% block content %}
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <h1 class="mb-4">Upload Cultural Archive</h1>
             
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" id="archiveForm">
                 {% csrf_token %}
                 
                 <div class="mb-3">
@@ -32,17 +19,18 @@
 
                 <div class="mb-3">
                     <label for="description" class="form-label">Description *</label>
-                    <textarea class="form-control" id="description" name="description" required></textarea>
+                    <textarea class="form-control" id="description" name="description" rows="6" required placeholder="Detailed description of the archive (plain text)"></textarea>
+                    <div class="form-text">Plain text description, no formatting</div>
                 </div>
 
                 <div class="mb-3">
                     <label for="archive_type" class="form-label">Archive Type *</label>
-                    <select class="form-select" id="archive_type" name="archive_type" required>
+                    <select class="form-select" id="archive_type" name="archive_type" required onchange="updateFileInput()">
                         <option value="">Select type...</option>
                         <option value="image">Image</option>
                         <option value="video">Video</option>
                         <option value="document">Document</option>
-                        <option value="artifact">Artifact</option>
+                        <option value="audio">Audio</option>
                     </select>
                 </div>
 
@@ -56,25 +44,78 @@
                     </select>
                 </div>
 
-                <div class="mb-3">
-                    <label for="image" class="form-label">Image/File *</label>
-                    <input type="file" class="form-control" id="image" name="image" accept=".jpg,.jpeg,.png,.webp" required>
-                    <div class="form-text">Accepted formats: JPG, JPEG, PNG, WEBP</div>
+                <!-- File Upload (changes based on type) -->
+                <div class="mb-3" id="imageUploadSection" style="display:none;">
+                    <label for="image" class="form-label">Image File *</label>
+                    <input type="file" class="form-control" id="image" name="image" accept=".jpg,.jpeg,.png,.webp">
+                    <div class="form-text">Accepted formats: JPG, JPEG, PNG, WEBP (2-5MB)</div>
+                </div>
+
+                <div class="mb-3" id="videoUploadSection" style="display:none;">
+                    <label for="video" class="form-label">Video File *</label>
+                    <input type="file" class="form-control" id="video" name="video" accept=".mp4,.webm,.ogg,.mov">
+                    <div class="form-text">Accepted formats: MP4, WEBM, OGG, MOV (Max 50MB)</div>
+                </div>
+
+                <div class="mb-3" id="documentUploadSection" style="display:none;">
+                    <label for="document" class="form-label">Document File *</label>
+                    <input type="file" class="form-control" id="document" name="document" accept=".pdf,.doc,.docx,.txt">
+                    <div class="form-text">Accepted formats: PDF, DOC, DOCX, TXT (2-5MB)</div>
+                </div>
+
+                <div class="mb-3" id="audioUploadSection" style="display:none;">
+                    <label for="audio" class="form-label">Audio File *</label>
+                    <input type="file" class="form-control" id="audio" name="audio" accept=".mp3,.wav,.ogg,.m4a">
+                    <div class="form-text">Accepted formats: MP3, WAV, OGG, M4A (2-5MB)</div>
+                </div>
+
+                <!-- Featured Image for non-image archives -->
+                <div class="mb-3" id="featuredImageSection" style="display:none;">
+                    <label for="featured_image" class="form-label">Featured Image/Thumbnail (Optional)</label>
+                    <input type="file" class="form-control" id="featured_image" name="featured_image" accept=".jpg,.jpeg,.png,.webp">
+                    <div class="form-text">Thumbnail for videos/audio (optional, 2-5MB)</div>
                 </div>
 
                 <div class="mb-3">
+                    <label for="caption" class="form-label">Caption (with copyright/source info) *</label>
+                    <input type="text" class="form-control" id="caption" name="caption" required placeholder="e.g., Photo by Northcote Thomas, 1910. Public Domain">
+                    <div class="form-text">Must include copyright or image source information</div>
+                </div>
+
+                <div class="mb-3" id="altTextSection">
                     <label for="alt_text" class="form-label">Image Description (Alt Text) *</label>
-                    <input type="text" class="form-control" id="alt_text" name="alt_text" required>
-                    <div class="form-text">Describe the image for accessibility</div>
+                    <input type="text" class="form-control" id="alt_text" name="alt_text" required placeholder="Describe the image for accessibility">
+                    <div class="form-text">Describe the image for accessibility and SEO</div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="date_created" class="form-label">Date Created (if known)</label>
-                    <input type="date" class="form-control" id="date_created" name="date_created">
+                    <label for="original_author" class="form-label">Original Author/Photographer (Optional)</label>
+                    <input type="text" class="form-control" id="original_author" name="original_author" placeholder="e.g., Northcote Thomas">
+                    <div class="form-text">Original creator/photographer if known</div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="tags" class="form-label">Tags</label>
+                    <label for="location" class="form-label">Location (Optional)</label>
+                    <input type="text" class="form-control" id="location" name="location" placeholder="e.g., Onitsha, Anambra State">
+                    <div class="form-text">Where the photo/artifact was taken or found</div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Date Created (if known)</label>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="date" class="form-control" id="date_created" name="date_created" placeholder="Exact date">
+                            <div class="form-text">Exact date if known</div>
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" id="circa_date" name="circa_date" placeholder="e.g., c1910, around 1910s">
+                            <div class="form-text">OR approximate date (e.g., "c1910", "around 1910s")</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="tags" class="form-label">Tags (Optional)</label>
                     <input type="text" class="form-control" id="tags" name="tags" placeholder="Enter tags separated by commas">
                     <div class="form-text">e.g., mask, ceremony, traditional</div>
                 </div>
@@ -88,16 +129,54 @@
     </div>
 </div>
 
-<script type="module">
-import { ClassicEditor, Bold, Essentials, Italic, Paragraph, Link, List, Heading, BlockQuote } from 'ckeditor5';
-
-ClassicEditor
-    .create( document.querySelector( '#description' ), {
-        plugins: [ Essentials, Bold, Italic, Paragraph, Link, List, Heading, BlockQuote ],
-        toolbar: [ 'heading', '|', 'bold', 'italic', 'link', '|', 'bulletedList', 'numberedList', 'blockQuote' ]
-    } )
-    .catch( error => {
-        console.error( error );
-    } );
+<script>
+function updateFileInput() {
+    const archiveType = document.getElementById('archive_type').value;
+    const imageSection = document.getElementById('imageUploadSection');
+    const videoSection = document.getElementById('videoUploadSection');
+    const documentSection = document.getElementById('documentUploadSection');
+    const audioSection = document.getElementById('audioUploadSection');
+    const featuredSection = document.getElementById('featuredImageSection');
+    const altTextSection = document.getElementById('altTextSection');
+    const altTextField = document.getElementById('alt_text');
+    
+    // Hide all sections
+    imageSection.style.display = 'none';
+    videoSection.style.display = 'none';
+    documentSection.style.display = 'none';
+    audioSection.style.display = 'none';
+    featuredSection.style.display = 'none';
+    
+    // Remove required from all file inputs
+    document.getElementById('image').removeAttribute('required');
+    document.getElementById('video').removeAttribute('required');
+    document.getElementById('document').removeAttribute('required');
+    document.getElementById('audio').removeAttribute('required');
+    
+    // Show appropriate section and set required
+    if (archiveType === 'image') {
+        imageSection.style.display = 'block';
+        document.getElementById('image').setAttribute('required', 'required');
+        altTextField.setAttribute('required', 'required');
+        altTextSection.style.display = 'block';
+    } else if (archiveType === 'video') {
+        videoSection.style.display = 'block';
+        featuredSection.style.display = 'block';
+        document.getElementById('video').setAttribute('required', 'required');
+        altTextField.removeAttribute('required');
+        altTextSection.style.display = 'none';
+    } else if (archiveType === 'document') {
+        documentSection.style.display = 'block';
+        document.getElementById('document').setAttribute('required', 'required');
+        altTextField.removeAttribute('required');
+        altTextSection.style.display = 'none';
+    } else if (archiveType === 'audio') {
+        audioSection.style.display = 'block';
+        featuredSection.style.display = 'block';
+        document.getElementById('audio').setAttribute('required', 'required');
+        altTextField.removeAttribute('required');
+        altTextSection.style.display = 'none';
+    }
+}
 </script>
 {% endblock %}

@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'django_recaptcha',
     'dbbackup',
     'push_notifications',
-    'django_editorjs',
+    'django_editorjs_fields',
     
     'core.apps.CoreConfig',
     'users.apps.UsersConfig',

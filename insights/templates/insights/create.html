@@ -4,16 +4,77 @@
 {% block title %}Create Insight - Igbo Archives{% endblock %}
 
 {% block extra_css %}
-<script type="importmap">
-{
-    "imports": {
-        "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.js",
-        "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.3.1/"
-    }
+<style>
+.codex-editor__redactor {
+    padding-bottom: 50px !important;
 }
-</script>
-<script type="module" src="{% static 'django_ckeditor_5/dist/bundle.js' %}"></script>
-<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.1/ckeditor5.css">
+.ce-block__content,
+.ce-toolbar__content {
+    max-width: 800px;
+}
+.ce-toolbox {
+    left: calc(50% - 420px);
+}
+#editorjs {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+    min-height: 300px;
+    background: white;
+}
+.archive-browser-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 10000;
+    overflow-y: auto;
+}
+.archive-browser-content {
+    position: relative;
+    background: white;
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 30px;
+    border-radius: 8px;
+}
+.archive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+.archive-item {
+    cursor: pointer;
+    border: 3px solid transparent;
+    border-radius: 6px;
+    padding: 8px;
+    transition: all 0.2s;
+}
+.archive-item:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 8px rgba(0,123,255,0.3);
+}
+.archive-item.selected {
+    border-color: #28a745;
+    background: #f0f8f4;
+}
+.archive-item img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.archive-item-title {
+    font-size: 12px;
+    margin-top: 5px;
+    text-align: center;
+    font-weight: 500;
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -22,59 +83,358 @@
         <div class="col-lg-10">
             <h1 class="mb-4">Create New Insight Post</h1>
             
-            {% if archive_title %}
-            <div class="alert alert-info">
-                <i class="bi bi-info-circle"></i> Writing about: <strong>{{ archive_title }}</strong>
-            </div>
-            {% endif %}
-            
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" id="insightForm">
                 {% csrf_token %}
                 
                 <div class="mb-3">
                     <label for="title" class="form-label">Title *</label>
-                    <input type="text" class="form-control" id="title" name="title" value="{{ initial_title }}" required>
+                    <input type="text" class="form-control" id="title" name="title" required>
                 </div>
 
                 <div class="mb-3">
                     <label for="excerpt" class="form-label">Excerpt</label>
-                    <textarea class="form-control" id="excerpt" name="excerpt" rows="3" maxlength="500">{{ initial_excerpt }}</textarea>
+                    <textarea class="form-control" id="excerpt" name="excerpt" rows="2" maxlength="500"></textarea>
                     <div class="form-text">Brief summary (max 500 characters)</div>
                 </div>
 
                 <div class="mb-3">
-                    <label for="content" class="form-label">Content *</label>
-                    <textarea class="form-control" id="content" name="content" required>{{ initial_content }}</textarea>
+                    <label class="form-label">Content *</label>
+                    <div id="editorjs"></div>
+                    <input type="hidden" id="content_json" name="content_json">
                 </div>
 
                 <div class="mb-3">
                     <label for="featured_image" class="form-label">Featured Image</label>
-                    <input type="file" class="form-control" id="featured_image" name="featured_image" accept=".jpg,.jpeg,.png,.webp">
-                </div>
-
-                <div class="mb-3">
-                    <label for="alt_text" class="form-label">Image Description (Alt Text)</label>
-                    <input type="text" class="form-control" id="alt_text" name="alt_text">
+                    <input type="file" class="form-control" id="featured_image" name="featured_image" accept="image/*">
+                    <div class="form-text">2-5MB</div>
                 </div>
 
                 <div class="mb-3">
                     <label for="tags" class="form-label">Tags</label>
-                    <input type="text" class="form-control" id="tags" name="tags" placeholder="Enter tags separated by commas">
-                </div>
-
-                <div class="mb-3 form-check">
-                    <input type="checkbox" class="form-check-input" id="is_published" name="is_published">
-                    <label class="form-check-label" for="is_published">
-                        Publish immediately (otherwise save as draft)
-                    </label>
+                    <input type="text" class="form-control" id="tags" name="tags" placeholder="culture, history, tradition">
                 </div>
 
                 <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">Save Post</button>
-                    <a href="{% url 'insights:list' %}" class="btn btn-secondary">Cancel</a>
+                    <button type="submit" name="action" value="save" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-save"></i> Save as Draft
+                    </button>
+                    <button type="submit" name="action" value="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-paper-plane"></i> Submit for Approval
+                    </button>
+                    <a href="{% url 'insights:list' %}" class="btn btn-outline-secondary">Cancel</a>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Archive Browser Modal -->
+<div id="archiveBrowserModal" class="archive-browser-modal">
+    <div class="archive-browser-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3>Select from Archives</h3>
+            <button type="button" class="btn-close" id="closeArchiveBrowser"></button>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" id="archiveSearch" placeholder="Search archives...">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="archiveTypeFilter">
+                    <option value="">All Types</option>
+                    <option value="image">Images</option>
+                    <option value="video">Videos</option>
+                    <option value="audio">Audio</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" id="archiveCategoryFilter">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="button" class="btn btn-primary w-100" id="searchArchivesBtn">Search</button>
+            </div>
+        </div>
+        
+        <div id="archiveGrid" class="archive-grid">
+            <p class="text-center text-muted">Loading archives...</p>
+        </div>
+        
+        <div class="text-center mt-3">
+            <button type="button" class="btn btn-outline-secondary" id="loadMoreArchives" style="display:none;">Load More</button>
+        </div>
+        
+        <div class="mt-3 text-end">
+            <button type="button" class="btn btn-secondary" id="cancelArchiveSelection">Cancel</button>
+            <button type="button" class="btn btn-success" id="insertSelectedArchive" style="display:none;">Insert Selected</button>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/quote@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/delimiter@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/table@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/code@latest"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/embed@latest"></script>
+
+<script>
+let currentArchivePage = 1;
+let selectedArchive = null;
+let editorInstance = null;
+
+// Custom Image Tool with Upload OR Archive Selection
+class CustomImageTool {
+    constructor({data, api}) {
+        this.data = data;
+        this.api = api;
+        this.wrapper = null;
+    }
+    
+    static get toolbox() {
+        return {
+            title: 'Image',
+            icon: '<svg width="17" height="15"><path d="M15.833 11.5V3.333a1.166 1.166 0 0 0-1.166-1.166H2.333A1.167 1.167 0 0 0 1.167 3.333V11.5c0 .644.522 1.167 1.166 1.167h12.334A1.166 1.166 0 0 0 15.833 11.5zM4.667 7.167L6.5 9l2.333-2.333L11.833 10H3.5l1.167-2.833z"></path></svg>'
+        };
+    }
+    
+    render() {
+        this.wrapper = document.createElement('div');
+        this.wrapper.classList.add('simple-image');
+        
+        if (this.data && this.data.url) {
+            this._createImage(this.data.url, this.data.caption);
+            return this.wrapper;
+        }
+        
+        const uploadBtn = document.createElement('button');
+        uploadBtn.type = 'button';
+        uploadBtn.innerHTML = '<i class="fas fa-upload"></i> Upload Image';
+        uploadBtn.classList.add('btn', 'btn-primary', 'me-2');
+        uploadBtn.onclick = () => this._uploadImage();
+        
+        const archiveBtn = document.createElement('button');
+        archiveBtn.type = 'button';
+        archiveBtn.innerHTML = '<i class="fas fa-archive"></i> Select from Archives';
+        archiveBtn.classList.add('btn', 'btn-success');
+        archiveBtn.onclick = () => this._selectFromArchives();
+        
+        const btnContainer = document.createElement('div');
+        btnContainer.style.padding = '20px';
+        btnContainer.style.textAlign = 'center';
+        btnContainer.appendChild(uploadBtn);
+        btnContainer.appendChild(archiveBtn);
+        
+        this.wrapper.appendChild(btnContainer);
+        return this.wrapper;
+    }
+    
+    _uploadImage() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const formData = new FormData();
+            formData.append('image', file);
+            formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+            
+            try {
+                const response = await fetch('/api/upload-image/', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success === 1) {
+                    this._createImage(data.file.url, '');
+                } else {
+                    alert(data.error || 'Upload failed');
+                }
+            } catch (error) {
+                alert('Upload failed: ' + error.message);
+            }
+        };
+        input.click();
+    }
+    
+    _selectFromArchives() {
+        window.currentImageTool = this;
+        document.getElementById('archiveBrowserModal').style.display = 'block';
+        loadArchives();
+    }
+    
+    _createImage(url, caption = '') {
+        this.wrapper.innerHTML = '';
+        
+        const img = document.createElement('img');
+        img.src = url;
+        img.style.maxWidth = '100%';
+        img.style.borderRadius = '4px';
+        
+        const captionInput = document.createElement('input');
+        captionInput.type = 'text';
+        captionInput.placeholder = 'Add a caption...';
+        captionInput.value = caption || '';
+        captionInput.classList.add('form-control', 'mt-2');
+        captionInput.onchange = () => {
+            this.data.caption = captionInput.value;
+        };
+        
+        this.wrapper.appendChild(img);
+        this.wrapper.appendChild(captionInput);
+        
+        this.data = { url, caption };
+    }
+    
+    save() {
+        return this.data;
+    }
+}
+
+// Initialize Editor.js
+editorInstance = new EditorJS({
+    holder: 'editorjs',
+    tools: {
+        header: {
+            class: Header,
+            inlineToolbar: ['link', 'bold', 'italic']
+        },
+        list: {
+            class: List,
+            inlineToolbar: true
+        },
+        quote: {
+            class: Quote,
+            inlineToolbar: true
+        },
+        delimiter: Delimiter,
+        table: Table,
+        code: Code,
+        embed: Embed,
+        image: CustomImageTool,
+    },
+    placeholder: 'Click here to start writing your insight... Use the + button to add images, lists, quotes, and more!',
+    autofocus: true,
+});
+
+// Form submission
+document.getElementById('insightForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    try {
+        const savedData = await editorInstance.save();
+        document.getElementById('content_json').value = JSON.stringify(savedData);
+        this.submit();
+    } catch (error) {
+        alert('Please add some content before submitting.');
+    }
+});
+
+// Archive Browser Functions
+document.getElementById('closeArchiveBrowser').addEventListener('click', closeArchiveBrowser);
+document.getElementById('cancelArchiveSelection').addEventListener('click', closeArchiveBrowser);
+
+function closeArchiveBrowser() {
+    document.getElementById('archiveBrowserModal').style.display = 'none';
+    selectedArchive = null;
+}
+
+document.getElementById('searchArchivesBtn').addEventListener('click', function() {
+    currentArchivePage = 1;
+    loadArchives();
+});
+
+document.getElementById('insertSelectedArchive').addEventListener('click', function() {
+    if (selectedArchive && window.currentImageTool) {
+        window.currentImageTool._createImage(selectedArchive.url, selectedArchive.caption);
+        closeArchiveBrowser();
+    }
+});
+
+async function loadArchives() {
+    const search = document.getElementById('archiveSearch').value;
+    const type = document.getElementById('archiveTypeFilter').value;
+    const category = document.getElementById('archiveCategoryFilter').value;
+    
+    const url = `/api/archive-media-browser/?page=${currentArchivePage}&search=${search}&type=${type}&category=${category}`;
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        const grid = document.getElementById('archiveGrid');
+        if (currentArchivePage === 1) {
+            grid.innerHTML = '';
+        }
+        
+        if (data.archives && data.archives.length > 0) {
+            data.archives.forEach(archive => {
+                const item = document.createElement('div');
+                item.className = 'archive-item';
+                item.dataset.archiveId = archive.id;
+                item.innerHTML = `
+                    ${archive.thumbnail ? `<img src="${archive.thumbnail}" alt="${archive.alt_text || archive.title}">` : '<div style="height:120px;background:#ddd;display:flex;align-items:center;justify-content:center;"><i class="fas fa-image fa-2x text-muted"></i></div>'}
+                    <div class="archive-item-title">${archive.title}</div>
+                `;
+                item.addEventListener('click', () => selectArchiveItem(archive, item));
+                grid.appendChild(item);
+            });
+        } else {
+            grid.innerHTML = '<p class="text-center text-muted">No archives found</p>';
+        }
+        
+        const loadMoreBtn = document.getElementById('loadMoreArchives');
+        if (data.has_next) {
+            loadMoreBtn.style.display = 'block';
+        } else {
+            loadMoreBtn.style.display = 'none';
+        }
+    } catch (error) {
+        console.error('Error loading archives:', error);
+        document.getElementById('archiveGrid').innerHTML = '<p class="text-center text-danger">Error loading archives</p>';
+    }
+}
+
+function selectArchiveItem(archive, element) {
+    // Remove previous selection
+    document.querySelectorAll('.archive-item').forEach(item => item.classList.remove('selected'));
+    
+    // Select this item
+    element.classList.add('selected');
+    selectedArchive = archive;
+    
+    // Show insert button
+    document.getElementById('insertSelectedArchive').style.display = 'inline-block';
+}
+
+document.getElementById('loadMoreArchives').addEventListener('click', function() {
+    currentArchivePage++;
+    loadArchives();
+});
+
+// Load categories
+fetch('/api/get-categories/')
+    .then(response => response.json())
+    .then(data => {
+        const select = document.getElementById('archiveCategoryFilter');
+        if (data.categories) {
+            data.categories.forEach(cat => {
+                const option = document.createElement('option');
+                option.value = cat.slug;
+                option.textContent = cat.name;
+                select.appendChild(option);
+            });
+        }
+    })
+    .catch(error => console.error('Error loading categories:', error));
+</script>
 {% endblock %}
