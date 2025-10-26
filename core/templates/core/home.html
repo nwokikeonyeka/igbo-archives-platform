@@ -15,6 +15,47 @@
     </div>
 </div>
 
+<!-- Museum-Style Featured Archives Carousel -->
+{% if featured_archives %}
+<div class="featured-carousel-section">
+    <div class="featured-carousel-container">
+        <div class="featured-carousel" id="featuredCarousel">
+            <div class="carousel-slides">
+                {% for archive in featured_archives %}
+                <a href="{% url 'archives:detail' archive.pk %}" class="carousel-slide {% if forloop.first %}active{% endif %}" data-slide="{{ forloop.counter0 }}">
+                    <div class="carousel-image-wrapper">
+                        <img src="{{ archive.image.url }}" alt="{{ archive.alt_text }}" class="carousel-image">
+                        <div class="carousel-overlay"></div>
+                    </div>
+                    <div class="carousel-content">
+                        <h3 class="carousel-title">{{ archive.title }}</h3>
+                        {% if archive.caption %}
+                        <p class="carousel-caption">{{ archive.caption }}</p>
+                        {% endif %}
+                        <p class="carousel-description">{{ archive.description|truncatewords:30 }}</p>
+                        <span class="carousel-cta">View Archive <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+            
+            <button class="carousel-nav carousel-prev" onclick="moveCarousel(-1); return false;" aria-label="Previous">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="carousel-nav carousel-next" onclick="moveCarousel(1); return false;" aria-label="Next">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+            
+            <div class="carousel-indicators">
+                {% for archive in featured_archives %}
+                <button class="carousel-dot {% if forloop.first %}active{% endif %}" onclick="goToSlide({{ forloop.counter0 }}); return false;" aria-label="Go to slide {{ forloop.counter }}"></button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 <div class="feature-section">
     <h2 class="section-title">Discover Our Platform</h2>
     <p class="section-subtitle">A comprehensive digital platform dedicated to preserving and celebrating Igbo culture, history, and heritage for future generations.</p>
@@ -117,11 +158,11 @@
     </div>
 </div>
 
-<div class="feature-section" style="background: linear-gradient(135deg, var(--parchment) 0%, var(--sepia-cream) 100%); padding: 4rem 2rem; border-radius: 20px; margin-top: 4rem;">
+<div class="feature-section why-igbo-section">
     <h2 class="section-title">Why Igbo Archives?</h2>
-    <div style="max-width: 900px; margin: 0 auto;">
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;">
-            <div style="text-align: center;">
+    <div class="why-igbo-container">
+        <div class="why-igbo-grid">
+            <div class="why-igbo-item">
                 <div class="benefit-icon-box">
                     <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="3" width="7" height="7"></rect>
@@ -133,7 +174,7 @@
                 <h4 style="color: var(--sepia-dark); margin-bottom: 0.5rem; font-weight: 700;">Preserve Heritage</h4>
                 <p style="color: var(--text-muted-light);">Digitally preserve Igbo cultural artifacts for future generations</p>
             </div>
-            <div style="text-align: center;">
+            <div class="why-igbo-item">
                 <div class="benefit-icon-box">
                     <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -144,7 +185,7 @@
                 <h4 style="color: var(--sepia-dark); margin-bottom: 0.5rem; font-weight: 700;">Global Access</h4>
                 <p style="color: var(--text-muted-light);">Connect Igbo people worldwide with their roots and heritage</p>
             </div>
-            <div style="text-align: center;">
+            <div class="why-igbo-item">
                 <div class="benefit-icon-box">
                     <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
@@ -154,7 +195,7 @@
                 <h4 style="color: var(--sepia-dark); margin-bottom: 0.5rem; font-weight: 700;">Educational</h4>
                 <p style="color: var(--text-muted-light);">Comprehensive resources for learning and research</p>
             </div>
-            <div style="text-align: center;">
+            <div class="why-igbo-item">
                 <div class="benefit-icon-box">
                     <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>

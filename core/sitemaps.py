@@ -22,7 +22,6 @@ class StaticPagesSitemap(Sitemap):
             'core:copyright',
             'core:contact',
             'core:donate',
-            'ai_service:chat',
         ]
 
     def location(self, item):

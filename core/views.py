@@ -3,10 +3,15 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
+from archives.models import Archive
 
 
 def home(request):
-    return render(request, 'core/home.html')
+    featured_archives = Archive.objects.filter(is_featured=True)[:5]
+    context = {
+        'featured_archives': featured_archives
+    }
+    return render(request, 'core/home.html', context)
 
 
 def terms_of_service(request):
