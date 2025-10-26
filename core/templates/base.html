@@ -106,10 +106,13 @@
                 <i class="fas fa-lightbulb"></i> Insights
             </a>
             <a href="/books/" class="nav-link {% if '/books/' in request.path %}active{% endif %}">
-                <i class="fas fa-book"></i> Books
+                <i class="fas fa-book"></i> Recommended Books
             </a>
             <a href="/academy/" class="nav-link {% if '/academy/' in request.path %}active{% endif %}">
                 <i class="fas fa-graduation-cap"></i> Academy
+            </a>
+            <a href="https://ai.igboarchives.com.ng" class="nav-link" target="_blank" rel="noopener noreferrer">
+                <i class="fas fa-robot"></i> Igbo Archives AI
             </a>
         </div>
     </nav>
@@ -134,6 +137,10 @@
         <a href="/academy/" class="mobile-nav-item {% if '/academy/' in request.path %}active{% endif %}">
             <i class="fas fa-graduation-cap"></i>
             <span>Academy</span>
+        </a>
+        <a href="https://ai.igboarchives.com.ng" class="mobile-nav-item" target="_blank" rel="noopener noreferrer">
+            <i class="fas fa-robot"></i>
+            <span>AI</span>
         </a>
     </nav>
     
@@ -188,8 +195,8 @@
                 <!-- Connect -->
                 <div class="footer-section">
                     <h3>Connect</h3>
-                    <a href="/ai-chat/" class="footer-link">
-                        <i class="fas fa-robot"></i> AI Assistant
+                    <a href="https://ai.igboarchives.com.ng" class="footer-link" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-robot"></i> Igbo Archives AI
                     </a>
                     <a href="/donate/" class="footer-link">
                         <i class="fas fa-heart"></i> Support Us
@@ -241,6 +248,23 @@
             icon.classList.add('fa-moon');
         }
     });
+    
+    // Sticky Header Shrink on Scroll
+    const mainHeader = document.querySelector('.main-header');
+    let lastScrollTop = 0;
+    const scrollThreshold = 100;
+    
+    window.addEventListener('scroll', () => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        if (scrollTop > scrollThreshold) {
+            mainHeader.classList.add('shrink');
+        } else {
+            mainHeader.classList.remove('shrink');
+        }
+        
+        lastScrollTop = scrollTop;
+    }, { passive: true });
     
     // Profile Dropdown Toggle
     const profileButton = document.getElementById('profileButton');

@@ -102,6 +102,11 @@ h4 { font-size: 1.5rem; margin-bottom: 0.875rem; }
     z-index: 1000;
     box-shadow: 0 2px 20px var(--shadow);
     backdrop-filter: blur(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-header.shrink {
+    box-shadow: 0 1px 10px var(--shadow);
 }
 
 .header-container {
@@ -112,6 +117,11 @@ h4 { font-size: 1.5rem; margin-bottom: 0.875rem; }
     justify-content: space-between;
     padding: 1rem 2rem;
     gap: 2rem;
+    transition: padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-header.shrink .header-container {
+    padding: 0.33rem 2rem;
 }
 
 /* Dark Mode Toggle - Top Left */
@@ -123,12 +133,18 @@ h4 { font-size: 1.5rem; margin-bottom: 0.875rem; }
     height: 40px;
     border-radius: 50%;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.2rem;
     order: -1;
+}
+
+.main-header.shrink .dark-mode-toggle {
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
 }
 
 .dark-mode-toggle:hover {
@@ -150,7 +166,11 @@ h4 { font-size: 1.5rem; margin-bottom: 0.875rem; }
 .logo-image {
     height: 45px;
     width: auto;
-    transition: opacity 0.3s ease;
+    transition: height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+}
+
+.main-header.shrink .logo-image {
+    height: 30px;
 }
 
 body:not(.dark-mode) .logo-light { display: block; }
@@ -180,12 +200,18 @@ body.dark-mode .logo-light { display: none; }
     padding: 0.5rem 1.25rem;
     border-radius: 25px;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     font-weight: 500;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.main-header.shrink .profile-button,
+.main-header.shrink .login-button {
+    padding: 0.25rem 0.875rem;
+    font-size: 0.9rem;
 }
 
 .profile-button:hover, .login-button:hover {
@@ -205,6 +231,13 @@ body.dark-mode .logo-light { display: none; }
     justify-content: center;
     color: white;
     font-weight: 600;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.main-header.shrink .profile-icon {
+    width: 26px;
+    height: 26px;
+    font-size: 0.85rem;
 }
 
 .profile-dropdown {
