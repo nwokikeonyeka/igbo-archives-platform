@@ -27,12 +27,10 @@ def archive_list(request):
     archives = paginator.get_page(page)
     
     categories = Category.objects.all()
-    featured = Archive.objects.filter(is_featured=True, is_approved=True)[:5]
     
     context = {
         'archives': archives,
         'categories': categories,
-        'featured': featured
     }
     
     if request.htmx:
@@ -69,9 +67,9 @@ def archive_detail(request, pk):
                 tags__name__in=tag_names
             ).exclude(pk=archive.pk).distinct()
     
-    # If still need more, add featured
+    # If still need more, add random archives
     if recommended.count() < 9:
-        recommended = Archive.objects.filter(is_approved=True).exclude(pk=archive.pk).order_by('-is_featured', '-created_at')
+        recommended = Archive.objects.filter(is_approved=True).exclude(pk=archive.pk).order_by('?')
     
     recommended = recommended[:9]
     
