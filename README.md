@@ -2,190 +2,84 @@
 
 **Preserving the Past, Inspiring the Future**
 
-A comprehensive Django-based web platform for preserving and celebrating Igbo culture, history, and heritage. This platform replaces the previous WordPress site at [igboarchives.com.ng](https://igboarchives.com.ng) with a modern, feature-rich Django application.
+A comprehensive Django-based web platform for preserving and celebrating Igbo culture, history, and heritage. This platform features a heritage-inspired design with sepia tones and vintage aesthetics, modern content management, and comprehensive community engagement tools.
 
 ## 🌟 Overview
 
-Igbo Archives is a dedicated platform for preserving and celebrating the history and culture of the Igbo people. Our mission is to correct misconceptions and foster a deeper understanding of Igbo heritage, ensuring it is passed on to future generations.
+Igbo Archives is a dedicated platform for preserving and celebrating the history and culture of the Igbo people. Built with Django 4.2, the platform offers a museum-quality experience for browsing cultural archives, community insights, and book reviews.
 
 ## ✨ Key Features
 
 ### Core Functionality
-- **Cultural Archives**: Curated collection of Igbo artifacts, photographs, documents, and historical materials
-- **Insights**: Community-generated articles exploring various aspects of Igbo culture
+- **Cultural Archives**: Curated collection of Igbo artifacts, photographs, documents, and historical materials with comprehensive metadata
+- **Insights**: Community-generated articles using Quill rich text editor with image management
 - **Book Reviews**: Reviews and discussions of literature related to Igbo history and culture
-- **AI Chat Assistant**: Powered by Igbo Archives AI for exploring Igbo heritage
-- **Academy** (Coming Soon): Educational resources for learning Igbo language and traditions
+- **AI Chat Assistant**: External link to Igbo Archives AI for exploring Igbo heritage
+- **Academy**: Educational landing page with information about Igbo language and traditions
+
+### Content Features
+- **Random Archives Carousel**: Homepage carousel showcasing approved archives in randomized order
+- **A-Z/Z-A Sorting**: Alphabetical sorting options for easy archive browsing
+- **Responsive Filtering**: HTMX-powered dynamic filtering by category, type, and search
+- **Grid/List Views**: Toggle between grid and list views with persistent user preferences
+- **Archive Media Browser**: Select images from existing archives when creating posts
+- **Image Upload with Metadata**: Required caption and description for all uploaded images
+- **Auto-Archive Creation**: Uploaded images automatically create archive entries pending admin approval
+
+### User Experience
+- **Heritage-Inspired Design**: Sepia tones, vintage colors, and aged paper aesthetics
+- **Sticky Shrinking Header**: Header reduces to 1/3 size on scroll for more content space
+- **4-Column Footer**: Responsive footer with Quick Links, Resources, and Community sections
+- **Profile Dropdown**: Quick access to profile, dashboard, messages, and notifications
+- **Notification System**: Bell icon with dropdown showing unread notifications
+- **Dark Mode**: User-toggleable dark/light theme with logo switching
 
 ### Technical Features
 - **Progressive Web App (PWA)**: Installable on mobile and desktop devices
-- **Email-Based Authentication**: Secure signup/login with email and password
-- **Social Authentication**: Google OAuth integration for easy signup
-- **ReCAPTCHA Protection**: Spam prevention on signup and login forms (configurable)
+- **Email-Based Authentication**: Secure signup/login using django-allauth
+- **Social Authentication**: Google OAuth integration
 - **Push Notifications**: Web push notifications for user engagement
-- **Threaded Comments**: Rich discussions with guest participation
-- **Rich Text Editor**: CKEditor 5 for content creation
-- **Dynamic Filtering**: HTMX-powered content filtering and sorting
+- **Threaded Comments**: Rich discussions with guest participation (reCAPTCHA protected)
+- **Quill Editor**: Modern rich text editor with enhanced image upload button
+- **Dynamic Filtering**: HTMX-powered content filtering without page reloads
 - **SEO Optimized**: Meta tags, Open Graph, and XML sitemaps
-- **Dark Mode**: User-toggleable dark/light theme
-- **Responsive Design**: Mobile-first design with Bootstrap 5
+- **Responsive Design**: Mobile-first design optimized for all screen sizes
 
 ## 📋 Project Structure
 
 ```
 igbo-archives-platform/
-├── academy/                    # Academy app (Coming Soon)
-│   ├── templates/
-│   ├── apps.py
-│   ├── urls.py
-│   └── views.py
-│
-├── ai_service/                 # AI Chat Service
-│   ├── templates/ai_service/
-│   │   └── chat.html
-│   ├── apps.py
-│   ├── models.py
-│   ├── urls.py
-│   └── views.py
-│
-├── api/                        # API endpoints
-│   ├── urls.py
-│   └── views.py
-│
+├── academy/                    # Academy app
+├── api/                        # API endpoints (image upload, archive browser)
 ├── archives/                   # Cultural Archives app
 │   ├── migrations/
+│   │   └── 0003_remove_is_featured_field.py  # Removed featured functionality
 │   ├── templates/archives/
-│   │   ├── partials/
-│   │   │   ├── archive_grid.html
-│   │   │   └── guest_comment_form.html
-│   │   ├── create.html
-│   │   ├── detail.html
-│   │   ├── edit.html
-│   │   └── list.html
-│   ├── admin.py
-│   ├── apps.py
-│   ├── models.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-│
+│   ├── admin.py               # Admin with inline editing for category & approval
+│   ├── models.py              # Archive model (no is_featured field)
+│   └── views.py               # Random carousel, A-Z/Z-A sorting
 ├── books/                      # Book Reviews app
-│   ├── migrations/
-│   ├── templates/books/
-│   │   ├── partials/
-│   │   │   └── guest_comment_form.html
-│   │   ├── create.html
-│   │   ├── detail.html
-│   │   ├── edit.html
-│   │   └── list.html
-│   ├── admin.py
-│   ├── apps.py
-│   ├── models.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-│
 ├── core/                       # Core app with base templates
-│   ├── management/
-│   │   └── commands/
-│   │       ├── backup_database.py
-│   │       └── send_subscriber_emails.py
-│   ├── migrations/
 │   ├── static/
-│   │   ├── css/
-│   │   │   └── style.css
-│   │   ├── js/
-│   │   │   ├── main.js
-│   │   │   └── push-notifications.js
-│   │   └── serviceworker.js
+│   │   ├── css/style.css      # Heritage design system, 4-column footer
+│   │   └── js/main.js         # Profile dropdown, notifications, carousels
 │   ├── templates/
-│   │   ├── account/           # Django-allauth templates
-│   │   │   ├── login.html
-│   │   │   └── signup.html
-│   │   ├── core/
-│   │   │   ├── pages/
-│   │   │   │   ├── about.html
-│   │   │   │   ├── contact.html
-│   │   │   │   ├── copyright.html
-│   │   │   │   ├── privacy.html
-│   │   │   │   └── terms.html
-│   │   │   ├── donate.html
-│   │   │   └── home.html
-│   │   ├── base.html
-│   │   └── robots.txt
-│   ├── admin.py
-│   ├── apps.py
-│   ├── context_processors.py
-│   ├── forms.py
-│   ├── indexnow.py
-│   ├── models.py
-│   ├── sitemaps.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-│
-├── igbo_archives/              # Django project settings
-│   ├── __init__.py
-│   ├── asgi.py
-│   ├── settings.py
-│   ├── urls.py
-│   └── wsgi.py
-│
+│   │   ├── base.html          # Updated header, footer, navigation
+│   │   ├── core/home.html     # Homepage with random carousel
+│   │   └── partials/recommended_carousel.html
+│   └── views.py               # Random archives for homepage
 ├── insights/                   # User Insights app
-│   ├── management/
-│   │   └── commands/
-│   │       ├── delete_old_drafts.py
-│   │       └── post_to_twitter.py
-│   ├── migrations/
 │   ├── templates/insights/
-│   │   ├── partials/
-│   │   │   ├── guest_comment_form.html
-│   │   │   └── insight_grid.html
-│   │   ├── create.html
-│   │   ├── detail.html
-│   │   ├── edit.html
-│   │   └── list.html
-│   ├── admin.py
-│   ├── apps.py
-│   ├── models.py
-│   ├── signals.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-│
+│   │   └── create.html        # Enhanced Quill editor with obvious image button
+│   └── models.py
 ├── users/                      # User management app
-│   ├── migrations/
-│   ├── templates/users/
-│   │   ├── compose.html
-│   │   ├── dashboard.html
-│   │   ├── delete_account.html
-│   │   ├── inbox.html
-│   │   ├── profile.html
-│   │   ├── profile_edit.html
-│   │   └── thread.html
-│   ├── admin.py
-│   ├── apps.py
-│   ├── forms.py
-│   ├── models.py
-│   ├── signals.py
-│   ├── tests.py
-│   ├── urls.py
-│   └── views.py
-│
-├── backups/                    # Database backup storage
 ├── media/                      # User-uploaded media files
-├── static/                     # Static assets (images, logos)
-│   └── images/
-│       └── logos/
-│           ├── logo-dark.png
-│           └── logo-light.png
-├── staticfiles/                # Collected static files
-│
-├── db.sqlite3                  # SQLite database (development)
-├── manage.py                   # Django management script
-├── plan.md                     # Detailed development plan
-├── requirements.txt            # Python dependencies
-└── README.md                   # This file
+├── static/images/logos/        # Logo files (dark and light versions)
+├── db.sqlite3                  # SQLite database
+├── manage.py
+├── plan.md                     # Development roadmap
+├── README.md                   # This file
+└── requirements.txt
 ```
 
 ## 🚀 Getting Started
@@ -221,31 +115,16 @@ igbo-archives-platform/
    GOOGLE_CLIENT_ID=your-google-client-id
    GOOGLE_CLIENT_SECRET=your-google-client-secret
    
-   # reCAPTCHA (optional - works without keys in development)
+   # reCAPTCHA (optional)
    RECAPTCHA_PUBLIC_KEY=your-recaptcha-site-key
    RECAPTCHA_PRIVATE_KEY=your-recaptcha-secret-key
    
-   # Google Gemini AI
-   GEMINI_API_KEY=your-gemini-api-key
-   
    # Firebase Cloud Messaging (for push notifications)
-   FCM_SERVER_KEY=your-fcm-server-key
    VAPID_PUBLIC_KEY=your-vapid-public-key
    VAPID_PRIVATE_KEY=your-vapid-private-key
    
-   # Email Settings (Brevo)
-   BREVO_EMAIL_USER=your-brevo-email
-   BREVO_API_KEY=your-brevo-api-key
+   # Email Settings
    DEFAULT_FROM_EMAIL=noreply@igboarchives.com
-   
-   # Twitter/X API
-   TWITTER_API_KEY=your-twitter-api-key
-   TWITTER_API_SECRET=your-twitter-api-secret
-   TWITTER_ACCESS_TOKEN=your-twitter-access-token
-   TWITTER_ACCESS_TOKEN_SECRET=your-twitter-access-token-secret
-   
-   # Google AdSense (optional)
-   GOOGLE_ADSENSE_CLIENT_ID=your-adsense-client-id
    ```
 
 4. **Run migrations**
@@ -272,64 +151,56 @@ igbo-archives-platform/
    - Open your browser and navigate to `http://localhost:5000`
    - Admin panel: `http://localhost:5000/admin`
 
-## 🔧 Configuration
+## 🎨 Design System
 
-### Database
+### Color Palette
+The platform uses a heritage-inspired color scheme:
+- **Sepia Tones**: Reminiscent of aged photographs
+- **Vintage Gold**: Accent color for CTAs and highlights
+- **Desert Sand**: Warm, earthy secondary colors
+- **Aged Paper**: Background tones that evoke historical documents
 
-By default, the project uses SQLite for development. For production, configure PostgreSQL:
-
-```python
-# In settings.py
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('DB_NAME'),
-        'USER': os.getenv('DB_USER'),
-        'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-    }
-}
-```
-
-### Authentication
-
-The platform uses email-based authentication:
-- **Username field**: Hidden from users, auto-generated from email
-- **Full name field**: Required during signup
-- **Terms acceptance**: Users must agree to Terms of Service and Privacy Policy
-- **reCAPTCHA**: Optional protection (works without keys in development)
-
-### PWA Settings
-
-Progressive Web App settings are configured in `settings.py`:
-- App name, description, and theme colors
-- Icons and splash screens
-- Offline capabilities via service worker
+### Typography
+- **Headings**: Playfair Display (serif, elegant)
+- **Body**: Inter (sans-serif, readable)
 
 ## 📝 Key Models
 
-### CustomUser (users/models.py)
-- `full_name`: User's display name
-- `bio`: User biography
-- `profile_picture`: Profile image
-- `social_links`: JSON field for social media links
-
 ### Archive (archives/models.py)
-- Cultural artifacts with metadata
-- Categories, tags, and image fields
-- SEO-optimized with meta descriptions
+- Stores cultural artifacts with comprehensive metadata
+- **Removed**: `is_featured` field (completely removed from database)
+- **Fields**: title, description, caption, alt_text, archive_type, image, category, tags
+- **Admin**: Inline editing for category and is_approved status
+- **Validation**: File size limits, required metadata
 
 ### InsightPost (insights/models.py)
-- User-generated articles
-- Draft/published status
-- Auto-deletion of old drafts
-- Social media integration
+- User-generated articles with Quill editor content
+- **Image handling**: Uploaded images create archive entries (pending approval)
+- **Title from caption**: Archive title uses image caption, not filename
+- **Fields**: title, content, excerpt, featured_image, author, is_published, is_approved
 
-### BookReview (books/models.py)
-- Book reviews and discussions
-- Rating system
-- Author and publication details
+### CustomUser (users/models.py)
+- Extended user model with full_name (displayed throughout site)
+- **Profile features**: Bio, profile picture, social links
+- **Display**: full_name used everywhere, username only in URLs
+
+## 🔧 Recent Updates (Version 2.0)
+
+### Completed
+✅ Removed all featured archive functionality (model field, admin, filters, database)  
+✅ Replaced "Featured" sort with A-Z and Z-A alphabetical sorting  
+✅ Homepage carousel now shows random approved archives  
+✅ Archive detail recommendations use random selection  
+✅ Footer redesigned: 4 columns (desktop/tablet), 1 column (mobile)  
+✅ Footer Community section with social icons at bottom  
+✅ About section shortened to one sentence  
+✅ Rich text editor image button enhanced (gradient, pulse animation, tooltip)  
+✅ Image uploads use caption as title (not filename)  
+✅ Uploaded images require admin approval and category assignment  
+✅ Admin can edit category and approval status inline  
+✅ Profile dropdown functional with correct JavaScript  
+✅ List/grid view toggle works on mobile  
+✅ "View Archive" removed from carousel  
 
 ## 🛠️ Management Commands
 
@@ -343,87 +214,57 @@ python manage.py backup_database
 python manage.py delete_old_drafts
 ```
 
-### Post to Twitter/X
-```bash
-python manage.py post_to_twitter
-```
-
 ## 🔒 Security Features
 
 - CSRF protection with trusted origins
 - Password validation (minimum length, complexity)
 - Secure session management
 - reCAPTCHA on forms (configurable)
-- Content Security Policy headers
 - SQL injection protection via Django ORM
+- File upload validation (size, type)
 
 ## 📱 Mobile Features
 
 - Responsive design with mobile-first approach
 - Fixed bottom navigation on mobile
-- Mobile back button
 - Touch-friendly interface
 - PWA installation prompt
-
-## 🎨 Theming
-
-The platform supports dark/light mode toggle:
-- User preference stored in localStorage
-- Smooth transitions between themes
-- Consistent color palette
+- Sticky header that shrinks on scroll
 
 ## 🔍 SEO & Social
 
 - XML sitemaps for all content types
 - Open Graph tags for social sharing
 - Twitter Card support
-- Structured data with Schema.org
 - robots.txt configuration
-- IndexNow integration
 
-## 📦 Dependencies
+## 📦 Key Dependencies
 
-See `requirements.txt` for the complete list. Key dependencies:
-- **Django 5.1+**: Web framework
+- **Django 4.2**: Web framework
 - **django-allauth**: Authentication
-- **django-ckeditor-5**: Rich text editor
 - **django-htmx**: Dynamic interactions
 - **django-pwa**: Progressive Web App
-- **google-generativeai**: AI chat service
 - **Pillow**: Image processing
-- **boto3**: Cloud storage (backups)
+- **django-taggit**: Tagging system
+- **django-quill-editor**: Rich text editing
 
 ## 🚢 Deployment
 
 ### Production Checklist
 
-1. Set `DEBUG=False` in environment variables
+1. Set `DEBUG=False`
 2. Update `ALLOWED_HOSTS` with your domain
 3. Configure `CSRF_TRUSTED_ORIGINS`
 4. Set up PostgreSQL database
-5. Configure static file serving (nginx/whitenoise)
+5. Configure static file serving
 6. Set up SSL certificate
-7. Configure email backend (Brevo/SendGrid)
+7. Configure email backend
 8. Set strong `SECRET_KEY`
-9. Configure backup storage (Oracle Cloud/AWS S3)
-10. Set up monitoring and logging
 
 ### Deployment Command
 ```bash
 gunicorn --bind 0.0.0.0:5000 --reuse-port igbo_archives.wsgi:application
 ```
-
-## 📄 License
-
-See LICENSE file for details.
-
-## 👥 Contributing
-
-Contributions are welcome! Please:
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
 
 ## 📧 Contact
 
@@ -439,4 +280,4 @@ For inquiries, suggestions, or contributions:
 
 ---
 
-**Thank you for being a part of Igbo Archives. Together, we can ensure that the history and culture of the Igbo people are never forgotten.**
+**Thank you for being a part of Igbo Archives. Together, we ensure that the history and culture of the Igbo people are preserved for future generations.**
