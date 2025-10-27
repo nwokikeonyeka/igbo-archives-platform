@@ -162,16 +162,16 @@ def upload_image(request):
     if file_extension not in allowed_extensions:
         return JsonResponse({'success': 0, 'error': f'Only {", ".join(allowed_extensions)} files are allowed'})
     
-    # Create Archive entry automatically
+    # Create Archive entry automatically using caption as title
     archive = Archive.objects.create(
-        title=f"Content Image: {os.path.splitext(image_file.name)[0]}",
+        title=caption,  # Use caption as title instead of filename
         description=description,
         caption=caption,
         alt_text=description,
         archive_type='image',
         image=image_file,
         uploaded_by=request.user,
-        is_approved=True  # Auto-approve content images
+        is_approved=False  # Require admin approval to assign category
     )
     
     file_url = request.build_absolute_uri(archive.image.url)
