@@ -315,6 +315,11 @@
         profileButton.addEventListener('click', (e) => {
             e.stopPropagation();
             profileDropdown.classList.toggle('show');
+            // Close notification dropdown if open
+            const notificationDropdown = document.getElementById('notificationDropdown');
+            if (notificationDropdown) {
+                notificationDropdown.style.display = 'none';
+            }
         });
         
         // Close dropdown when clicking outside
@@ -324,6 +329,57 @@
         
         // Prevent dropdown from closing when clicking inside it
         profileDropdown.addEventListener('click', (e) => {
+            e.stopPropagation();
+        });
+    }
+    
+    // Notification Bell Dropdown
+    const notificationBell = document.getElementById('notificationBell');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    
+    if (notificationBell && notificationDropdown) {
+        notificationBell.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            
+            // Close profile dropdown if open
+            if (profileDropdown) {
+                profileDropdown.classList.remove('show');
+            }
+            
+            // Toggle notification dropdown
+            const isVisible = notificationDropdown.style.display === 'block';
+            
+            if (!isVisible) {
+                // Load notifications via AJAX
+                try {
+                    const response = await fetch('/profile/notifications/dropdown/');
+                    if (response.ok) {
+                        const html = await response.text();
+                        notificationDropdown.innerHTML = html;
+                        notificationDropdown.style.display = 'block';
+                    } else {
+                        notificationDropdown.innerHTML = '<div class="notification-empty"><i class="fas fa-bell-slash"></i><p>Failed to load notifications</p></div>';
+                        notificationDropdown.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Error loading notifications:', error);
+                    notificationDropdown.innerHTML = '<div class="notification-empty"><i class="fas fa-exclamation-triangle"></i><p>Error loading notifications</p></div>';
+                    notificationDropdown.style.display = 'block';
+                }
+            } else {
+                notificationDropdown.style.display = 'none';
+            }
+        });
+        
+        // Close notification dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!notificationBell.contains(e.target) && !notificationDropdown.contains(e.target)) {
+                notificationDropdown.style.display = 'none';
+            }
+        });
+        
+        // Prevent dropdown from closing when clicking inside it
+        notificationDropdown.addEventListener('click', (e) => {
             e.stopPropagation();
         });
     }
