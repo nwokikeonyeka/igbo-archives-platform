@@ -15,18 +15,18 @@
                     {% if item.image or item.featured_image or item.cover_image %}
                     <div class="card-image">
                         <img src="{% if item.image %}{{ item.image.url }}{% elif item.featured_image %}{{ item.featured_image.url }}{% else %}{{ item.cover_image.url }}{% endif %}" 
-                             alt="{{ item.title|default:item.review_title }}">
+                             alt="{% if item.title %}{{ item.title }}{% elif item.review_title %}{{ item.review_title }}{% elif item.book_title %}{{ item.book_title }}{% endif %}">
                     </div>
                     {% endif %}
                     <div class="card-content">
-                        <h4 class="card-title">{{ item.title|default:item.review_title|truncatewords:10 }}</h4>
+                        <h4 class="card-title">{% if item.title %}{{ item.title|truncatewords:10 }}{% elif item.review_title %}{{ item.review_title|truncatewords:10 }}{% elif item.book_title %}{{ item.book_title|truncatewords:10 }}{% endif %}</h4>
                         <p class="card-meta">
                             {% if item.uploaded_by %}
-                                By {{ item.uploaded_by.full_name|default:item.uploaded_by.get_display_name }}
+                                By {{ item.uploaded_by.get_display_name }}
                             {% elif item.author %}
-                                By {{ item.author.full_name|default:item.author.get_display_name }}
+                                By {{ item.author.get_display_name }}
                             {% elif item.reviewer %}
-                                By {{ item.reviewer.full_name|default:item.reviewer.get_display_name }}
+                                By {{ item.reviewer.get_display_name }}
                             {% endif %}
                         </p>
                     </div>

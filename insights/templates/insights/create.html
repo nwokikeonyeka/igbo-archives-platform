@@ -425,8 +425,8 @@ function insertSelectedArchive() {
         if (selectedArchive.alt_text && selectedArchive.alt_text !== selectedArchive.caption) {
             quill.insertText(position, '\n');
             position++;
-            quill.insertText(position, 'Alt: ' + selectedArchive.alt_text, { 'italic': true, 'color': '#888', 'size': 'small' });
-            position += selectedArchive.alt_text.length + 5;
+            quill.insertText(position, 'Description: ' + selectedArchive.alt_text, { 'italic': true, 'color': '#888', 'size': 'small' });
+            position += selectedArchive.alt_text.length + 13;
         }
         
         quill.insertText(position, '\n\n');
