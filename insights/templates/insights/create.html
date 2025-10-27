@@ -224,7 +224,7 @@ let selectedFeaturedImage = null;
 // Initialize Quill
 quill = new Quill('#editor', {
     theme: 'snow',
-    placeholder: 'Start writing your insight... Click the image icon in the toolbar to add images!',
+    placeholder: 'Start writing your insight... Click the image icon (📷) in the toolbar above to add images!',
     modules: {
         toolbar: [
             [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
@@ -239,6 +239,36 @@ quill = new Quill('#editor', {
         ]
     }
 });
+
+// Make the image button more obvious with a tooltip and highlight
+setTimeout(() => {
+    const imageButton = document.querySelector('.ql-image');
+    if (imageButton) {
+        imageButton.title = 'Click here to add images! 📷';
+        imageButton.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        imageButton.style.color = 'white';
+        imageButton.style.borderRadius = '4px';
+        imageButton.style.padding = '6px 8px';
+        imageButton.style.fontWeight = 'bold';
+        
+        // Add pulsing animation to draw attention
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse-image-button {
+                0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.7); }
+                50% { transform: scale(1.05); box-shadow: 0 0 0 8px rgba(102, 126, 234, 0); }
+            }
+            .ql-image {
+                animation: pulse-image-button 2s ease-in-out 3;
+            }
+            .ql-image:hover {
+                background: linear-gradient(135deg, #764ba2 0%, #667eea 100%) !important;
+                transform: scale(1.1);
+            }
+        `;
+        document.head.appendChild(style);
+    }
+}, 100);
 
 // Custom image handler
 quill.getModule('toolbar').addHandler('image', function() {
@@ -425,8 +455,8 @@ function insertSelectedArchive() {
         if (selectedArchive.alt_text && selectedArchive.alt_text !== selectedArchive.caption) {
             quill.insertText(position, '\n');
             position++;
-            quill.insertText(position, 'Alt: ' + selectedArchive.alt_text, { 'italic': true, 'color': '#888', 'size': 'small' });
-            position += selectedArchive.alt_text.length + 5;
+            quill.insertText(position, 'Description: ' + selectedArchive.alt_text, { 'italic': true, 'color': '#888', 'size': 'small' });
+            position += selectedArchive.alt_text.length + 13;
         }
         
         quill.insertText(position, '\n\n');

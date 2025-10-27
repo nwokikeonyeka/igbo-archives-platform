@@ -1,29 +1,27 @@
 {% if archives %}
     {% for archive in archives %}
-    <div class="col">
-        <div class="card h-100">
-            <img src="{{ archive.image.url }}" class="card-img-top" alt="{{ archive.alt_text }}" style="height: 200px; object-fit: cover;">
-            <div class="card-body">
-                <h5 class="card-title">{{ archive.title }}</h5>
-                <p class="card-text">{{ archive.description|truncatewords:15 }}</p>
-                <div class="mb-2">
-                    <span class="badge bg-secondary">{{ archive.get_archive_type_display }}</span>
-                    {% if archive.category %}
-                    <span class="badge bg-primary">{{ archive.category.name }}</span>
-                    {% endif %}
-                </div>
+    <div class="card h-100">
+        <img src="{{ archive.image.url }}" class="card-img-top" alt="{{ archive.alt_text }}" style="height: 200px; object-fit: cover;">
+        <div class="card-body">
+            <h5 class="card-title">{{ archive.title }}</h5>
+            <p class="card-text">{{ archive.description|truncatewords:15 }}</p>
+            <div class="mb-2">
+                <span class="badge bg-secondary">{{ archive.get_archive_type_display }}</span>
+                {% if archive.category %}
+                <span class="badge bg-primary">{{ archive.category.name }}</span>
+                {% endif %}
             </div>
-            <div class="card-footer">
-                <small class="text-muted">{{ archive.created_at|date:"M d, Y" }}</small>
-                <a href="{% url 'archives:detail' archive.pk %}" class="btn btn-sm btn-primary float-end">View</a>
-            </div>
+        </div>
+        <div class="card-footer">
+            <small class="text-muted">{{ archive.created_at|date:"M d, Y" }}</small>
+            <a href="{% url 'archives:detail' archive.pk %}" class="btn btn-sm btn-primary float-end">View</a>
         </div>
     </div>
     {% endfor %}
 
     <!-- Pagination -->
     {% if archives.has_other_pages %}
-    <div class="col-12 mt-4">
+    <div style="grid-column: 1 / -1; margin-top: 2rem;">
         <nav>
             <ul class="pagination justify-content-center">
                 {% if archives.has_previous %}
@@ -52,7 +50,7 @@
     </div>
     {% endif %}
 {% else %}
-    <div class="col-12">
+    <div style="grid-column: 1 / -1;">
         <div class="alert alert-info">
             No archives found matching your criteria. <a href="{% url 'archives:list' %}">View all archives</a>
         </div>

@@ -162,7 +162,6 @@ class Archive(models.Model):
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='archives')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    is_featured = models.BooleanField(default=False)
     is_approved = models.BooleanField(default=True, help_text="Admin approval status")
     
     tags = TaggableManager(blank=True)

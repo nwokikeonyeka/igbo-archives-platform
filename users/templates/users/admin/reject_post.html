@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Reject {{ post_type|title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Reject {{ post_type|title }}</h2>
+    
+    <div class="alert alert-warning">
+        You are about to reject this {{ post_type }}. Please provide a reason for the rejection so the author can improve and resubmit.
+    </div>
+
+    <div class="post-preview mb-4">
+        <h3>{{ post.title|default:post.review_title }}</h3>
+        <p class="text-muted">
+            By {{ post.author.full_name|default:post.author.get_display_name|default:post.reviewer.full_name|default:post.reviewer.get_display_name }}
+        </p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="reason" class="form-label">Rejection Reason *</label>
+            <textarea name="reason" id="reason" class="form-control" rows="4" required 
+                      placeholder="Please explain why this post is being rejected..."></textarea>
+            <div class="form-text">This will be sent to the author via email and in-app notification.</div>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-times"></i> Confirm Rejection
+            </button>
+            <a href="{% url 'users:moderation_dashboard' %}" class="btn btn-outline-secondary">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

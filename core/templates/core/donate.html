@@ -12,67 +12,36 @@
         </p>
     </div>
 
-    <div class="row g-4">
-        <!-- One-Time Donation -->
-        <div class="col-md-6">
-            <div class="card" style="height: 100%;">
-                <div class="card-body" style="padding: 2rem;">
-                    <div style="text-align: center; margin-bottom: 1.5rem;">
-                        <i class="fas fa-hand-holding-heart" style="font-size: 3rem; color: var(--bronze);"></i>
+    <!-- Single Support Section -->
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-lg">
+                <div class="card-body" style="padding: 3rem;">
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <i class="fas fa-heart" style="font-size: 4rem; color: var(--bronze);"></i>
                     </div>
-                    <h3 style="text-align: center; margin-bottom: 1rem;">One-Time Donation</h3>
-                    <p style="color: var(--text-secondary); text-align: center; margin-bottom: 2rem;">
-                        Make a one-time contribution to support our cultural preservation mission.
+                    <h3 style="text-align: center; margin-bottom: 1rem; font-size: 2rem;">Support Our Mission</h3>
+                    <p style="color: var(--text-secondary); text-align: center; margin-bottom: 2rem; font-size: 1.125rem;">
+                        Your contribution helps us preserve Igbo culture, digitize historical artifacts, create educational content, and build a thriving community. Every donation, big or small, makes a lasting impact on our mission to pass Igbo heritage to future generations.
                     </p>
                     
                     {% if ENABLE_DONATIONS %}
-                    <div class="donation-amounts" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1.5rem;">
-                        <button class="donation-btn" data-amount="10">$10</button>
-                        <button class="donation-btn" data-amount="25">$25</button>
-                        <button class="donation-btn" data-amount="50">$50</button>
-                        <button class="donation-btn" data-amount="100">$100</button>
+                    <div style="text-align: center; margin-bottom: 2rem;">
+                        <a href="https://www.paypal.com/donate/?hosted_button_id=YOUR_PAYPAL_BUTTON_ID" 
+                           target="_blank" 
+                           rel="noopener noreferrer" 
+                           class="btn btn-primary btn-lg" 
+                           style="font-size: 1.25rem; padding: 1rem 3rem;">
+                            <i class="fas fa-heart"></i> Donate Now
+                        </a>
                     </div>
-                    <div class="custom-amount" style="margin-bottom: 1.5rem;">
-                        <label for="customAmount" style="display: block; margin-bottom: 0.5rem; font-weight: 500;">Custom Amount (USD)</label>
-                        <input type="number" id="customAmount" class="form-control" placeholder="Enter amount" min="1" step="1">
-                    </div>
-                    <button class="btn btn-primary w-100" id="donateBtn">
-                        <i class="fas fa-heart"></i> Donate Now
-                    </button>
+                    
+                    <p style="text-align: center; color: var(--text-secondary); font-size: 0.875rem;">
+                        <i class="fas fa-shield-alt"></i> Secure donation processing powered by PayPal
+                    </p>
                     {% else %}
                     <div class="alert alert-info">
                         <i class="fas fa-info-circle"></i> Donation system is currently being configured. Please check back soon!
-                    </div>
-                    {% endif %}
-                </div>
-            </div>
-        </div>
-
-        <!-- Monthly Support -->
-        <div class="col-md-6">
-            <div class="card" style="height: 100%;">
-                <div class="card-body" style="padding: 2rem;">
-                    <div style="text-align: center; margin-bottom: 1.5rem;">
-                        <i class="fas fa-gift" style="font-size: 3rem; color: var(--bronze);"></i>
-                    </div>
-                    <h3 style="text-align: center; margin-bottom: 1rem;">Monthly Support</h3>
-                    <p style="color: var(--text-secondary); text-align: center; margin-bottom: 2rem;">
-                        Become a regular supporter and help us plan long-term preservation projects.
-                    </p>
-                    
-                    {% if ENABLE_DONATIONS %}
-                    <div class="donation-amounts" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; margin-bottom: 1.5rem;">
-                        <button class="monthly-btn" data-amount="5">$5/mo</button>
-                        <button class="monthly-btn" data-amount="10">$10/mo</button>
-                        <button class="monthly-btn" data-amount="25">$25/mo</button>
-                        <button class="monthly-btn" data-amount="50">$50/mo</button>
-                    </div>
-                    <button class="btn btn-primary w-100" id="subscribeBtn">
-                        <i class="fas fa-calendar-check"></i> Become a Supporter
-                    </button>
-                    {% else %}
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i> Monthly support option is currently being configured. Please check back soon!
                     </div>
                     {% endif %}
                 </div>
@@ -150,93 +119,4 @@
     </div>
 </div>
 
-{% if ENABLE_DONATIONS %}
-<script src="https://js.stripe.com/v3/"></script>
-<script>
-// Initialize Stripe
-const stripe = Stripe('{{ STRIPE_PUBLIC_KEY }}');
-let selectedAmount = null;
-let isMonthly = false;
-
-// One-time donation buttons
-document.querySelectorAll('.donation-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('.donation-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        selectedAmount = parseInt(this.dataset.amount);
-        isMonthly = false;
-        document.getElementById('customAmount').value = '';
-    });
-});
-
-// Monthly support buttons
-document.querySelectorAll('.monthly-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.querySelectorAll('.monthly-btn').forEach(b => b.classList.remove('active'));
-        this.classList.add('active');
-        selectedAmount = parseInt(this.dataset.amount);
-        isMonthly = true;
-    });
-});
-
-// Custom amount input
-document.getElementById('customAmount')?.addEventListener('input', function() {
-    document.querySelectorAll('.donation-btn').forEach(b => b.classList.remove('active'));
-    selectedAmount = parseInt(this.value);
-    isMonthly = false;
-});
-
-// Donate button
-document.getElementById('donateBtn')?.addEventListener('click', async function() {
-    const amount = selectedAmount || parseInt(document.getElementById('customAmount').value);
-    
-    if (!amount || amount < 1) {
-        alert('Please select or enter a donation amount');
-        return;
-    }
-    
-    // TODO: Implement Stripe Checkout
-    // This would create a checkout session and redirect to Stripe
-    alert(`Donation functionality will be enabled once Stripe is configured. Amount: $${amount}`);
-});
-
-// Subscribe button
-document.getElementById('subscribeBtn')?.addEventListener('click', async function() {
-    if (!selectedAmount) {
-        alert('Please select a monthly support amount');
-        return;
-    }
-    
-    // TODO: Implement Stripe Subscriptions
-    alert(`Monthly support functionality will be enabled once Stripe is configured. Amount: $${selectedAmount}/month`);
-});
-</script>
-
-<style>
-.donation-btn, .monthly-btn {
-    padding: 1rem;
-    border: 2px solid var(--border-color);
-    background: var(--bg-card);
-    color: var(--text-primary);
-    border-radius: 8px;
-    font-size: 1.125rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.donation-btn:hover, .monthly-btn:hover {
-    border-color: var(--bronze);
-    background: var(--bronze);
-    color: white;
-    transform: translateY(-2px);
-}
-
-.donation-btn.active, .monthly-btn.active {
-    border-color: var(--bronze);
-    background: var(--bronze);
-    color: white;
-}
-</style>
-{% endif %}
 {% endblock %}

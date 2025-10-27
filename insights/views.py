@@ -43,7 +43,55 @@ def insight_list(request):
 
 def insight_detail(request, slug):
     insight = get_object_or_404(InsightPost, slug=slug, is_published=True, is_approved=True)
-    return render(request, 'insights/detail.html', {'insight': insight})
+    
+    # Get previous and next insights
+    previous_insight = InsightPost.objects.filter(
+        is_published=True,
+        is_approved=True,
+        created_at__lt=insight.created_at
+    ).order_by('-created_at').first()
+    
+    next_insight = InsightPost.objects.filter(
+        is_published=True,
+        is_approved=True,
+        created_at__gt=insight.created_at
+    ).order_by('created_at').first()
+    
+    # Get recommended insights (9 total: same tags, same author, or recent)
+    recommended = InsightPost.objects.filter(
+        is_published=True,
+        is_approved=True
+    ).exclude(slug=insight.slug)
+    
+    tag_names = insight.tags.values_list('name', flat=True)
+    if tag_names:
+        recommended = recommended.filter(tags__name__in=tag_names).distinct()
+    
+    # If we need more, add by author
+    if recommended.count() < 9:
+        recommended = InsightPost.objects.filter(
+            is_published=True,
+            is_approved=True,
+            author=insight.author
+        ).exclude(slug=insight.slug)
+    
+    # If still need more, add recent
+    if recommended.count() < 9:
+        recommended = InsightPost.objects.filter(
+            is_published=True,
+            is_approved=True
+        ).exclude(slug=insight.slug).order_by('-created_at')
+    
+    recommended = recommended[:9]
+    
+    context = {
+        'insight': insight,
+        'previous_insight': previous_insight,
+        'next_insight': next_insight,
+        'recommended': recommended,
+    }
+    
+    return render(request, 'insights/detail.html', context)
 
 def extract_first_image_from_editorjs(content_json_str):
     """Extract first image URL from Editor.js JSON content"""

@@ -8,6 +8,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Archive)
 class ArchiveAdmin(admin.ModelAdmin):
-    list_display = ['title', 'archive_type', 'category', 'uploaded_by', 'created_at', 'is_featured']
-    list_filter = ['archive_type', 'category', 'is_featured']
+    list_display = ['title', 'archive_type', 'category', 'uploaded_by', 'created_at', 'is_approved']
+    list_filter = ['archive_type', 'category', 'is_approved']
     search_fields = ['title', 'description']
+    list_editable = ['category', 'is_approved']
