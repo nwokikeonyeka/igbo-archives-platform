@@ -121,7 +121,7 @@
                 <div class="mb-3">
                     <label class="form-label">Content *</label>
                     <div id="editor" style="height: 400px; background: white;"></div>
-                    <input type="hidden" id="content" name="content" required>
+                    <input type="hidden" id="content_json" name="content_json" required>
                 </div>
 
                 <div class="mb-3" id="featuredImageSection" style="display:none;">
@@ -475,7 +475,7 @@ document.getElementById('archiveSearch').addEventListener('input', function() {
 // Form submission
 document.getElementById('insightForm').addEventListener('submit', function(e) {
     const content = quill.root.innerHTML;
-    document.getElementById('content').value = content;
+    document.getElementById('content_json').value = content;
     
     if (quill.getText().trim().length === 0) {
         e.preventDefault();

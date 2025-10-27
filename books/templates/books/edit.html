@@ -56,7 +56,7 @@
                 <div class="mb-3">
                     <label class="form-label">Review Content *</label>
                     <div id="editor" style="height: 400px; background: white;"></div>
-                    <input type="hidden" id="content" name="content" required>
+                    <input type="hidden" id="content_json" name="content_json" required>
                 </div>
 
                 {% if review.cover_image %}
@@ -173,7 +173,7 @@ quill.getModule('toolbar').addHandler('image', function() {
 // Form submission
 document.getElementById('editBookForm').addEventListener('submit', function(e) {
     const content = quill.root.innerHTML;
-    document.getElementById('content').value = content;
+    document.getElementById('content_json').value = content;
 });
 
 console.log('✓ Quill editor initialized!');

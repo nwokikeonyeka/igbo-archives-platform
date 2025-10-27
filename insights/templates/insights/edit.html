@@ -68,7 +68,7 @@
                 <div class="mb-3">
                     <label class="form-label">Content *</label>
                     <div id="editor" style="height: 400px; background: white;"></div>
-                    <input type="hidden" id="content" name="content" required>
+                    <input type="hidden" id="content_json" name="content_json" required>
                 </div>
 
                 <div class="mb-3" id="featuredImageSection" style="display:none;">
@@ -246,7 +246,7 @@ quill.getModule('toolbar').addHandler('image', function() {
 // Form submission
 document.getElementById('editInsightForm').addEventListener('submit', function(e) {
     const content = quill.root.innerHTML;
-    document.getElementById('content').value = content;
+    document.getElementById('content_json').value = content;
     
     // Auto-select first image as featured if none selected
     const images = quill.root.querySelectorAll('img');
