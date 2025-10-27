@@ -236,14 +236,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 notificationDropdown.style.display = 'none';
             }
             
-            profileDropdown.classList.toggle('show');
+            // Toggle profile dropdown
+            const isVisible = profileDropdown.style.display === 'block';
+            if (isVisible) {
+                profileDropdown.style.display = 'none';
+            } else {
+                profileDropdown.style.display = 'block';
+            }
         });
     }
     
     // Close dropdowns when clicking outside
     document.addEventListener('click', () => {
         if (profileDropdown) {
-            profileDropdown.classList.remove('show');
+            profileDropdown.style.display = 'none';
         }
         if (notificationDropdown) {
             notificationDropdown.style.display = 'none';

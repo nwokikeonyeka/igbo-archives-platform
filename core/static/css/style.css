@@ -266,17 +266,8 @@ body.dark-mode .logo-light { display: none; }
     border-radius: 12px;
     box-shadow: 0 8px 30px var(--shadow-hover);
     min-width: 220px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
+    display: none;
     z-index: 1001;
-}
-
-.profile-dropdown.show {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
 }
 
 .profile-dropdown-item {
