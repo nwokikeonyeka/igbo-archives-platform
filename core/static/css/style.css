@@ -1557,10 +1557,16 @@ body.dark-mode .carousel-nav {
     gap: 2rem;
 }
 
+.archive-view-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
 .archive-view-list .card {
     display: flex;
     flex-direction: row;
-    margin-bottom: 1.5rem;
+    margin-bottom: 0;
 }
 
 .archive-view-list .card-img-top {
@@ -1568,6 +1574,7 @@ body.dark-mode .carousel-nav {
     height: 200px;
     object-fit: cover;
     border-radius: 12px 0 0 12px;
+    flex-shrink: 0;
 }
 
 .archive-view-list .card-body {
