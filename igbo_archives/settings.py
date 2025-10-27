@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'dbbackup',
     'push_notifications',
     'django_editorjs_fields',
+    'notifications',
     
     'core.apps.CoreConfig',
     'users.apps.UsersConfig',
@@ -132,6 +133,7 @@ ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
 ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_LOGOUT_ON_GET = False  # Require POST for logout (no confirmation page)
 ACCOUNT_FORMS = {
     'signup': 'users.forms.CustomSignupForm',
     'login': 'users.forms.CustomLoginForm',

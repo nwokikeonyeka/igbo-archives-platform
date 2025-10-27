@@ -19,7 +19,9 @@
                 <div class="message-bubble-container {% if message.sender == user %}sent{% else %}received{% endif %}">
                     <div class="message-bubble">
                         <div class="message-sender">
-                            {{ message.sender.full_name|default:message.sender.get_display_name }}
+                            <a href="{% url 'users:profile' message.sender.username %}" class="text-decoration-none" style="{% if message.sender == user %}color: rgba(255,255,255,0.9);{% else %}color: var(--primary-color);{% endif %}">
+                                {{ message.sender.get_display_name }}
+                            </a>
                         </div>
                         <div class="message-content">
                             {{ message.content|linebreaks }}

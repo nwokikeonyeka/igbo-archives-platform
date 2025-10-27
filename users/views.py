@@ -4,12 +4,57 @@ from django.contrib.auth import get_user_model
 from .models import Thread, Message
 from .forms import ProfileEditForm
 from django.contrib import messages as django_messages
+from django.db import models
 
 User = get_user_model()
 
 @login_required
 def dashboard(request):
-    return render(request, 'users/dashboard.html')
+    from archives.models import Archive
+    from insights.models import InsightPost, EditSuggestion
+    from books.models import BookReview
+    
+    # Get user's data
+    messages_threads = request.user.message_threads.all()
+    
+    # My Insights (published and pending)
+    my_insights = InsightPost.objects.filter(
+        author=request.user
+    ).filter(
+        models.Q(is_published=True) | models.Q(pending_approval=True)
+    ).order_by('-created_at')
+    
+    # My Drafts (saved progress, not submitted)
+    my_drafts = InsightPost.objects.filter(
+        author=request.user,
+        is_published=False,
+        pending_approval=False
+    ).order_by('-updated_at')
+    
+    # My Book Reviews
+    my_book_reviews = BookReview.objects.filter(reviewer=request.user).order_by('-created_at')
+    
+    # My Archives
+    my_archives = Archive.objects.filter(uploaded_by=request.user).order_by('-created_at')
+    
+    # Edit Suggestions Received on my posts
+    my_posts = InsightPost.objects.filter(author=request.user)
+    edit_suggestions = EditSuggestion.objects.filter(
+        post__in=my_posts,
+        is_approved=False,
+        is_rejected=False
+    ).select_related('post', 'suggested_by').order_by('-created_at')
+    
+    context = {
+        'messages_threads': messages_threads,
+        'my_insights': my_insights,
+        'my_drafts': my_drafts,
+        'my_book_reviews': my_book_reviews,
+        'my_archives': my_archives,
+        'edit_suggestions': edit_suggestions,
+    }
+    
+    return render(request, 'users/dashboard.html', context)
 
 def profile_view(request, username):
     from archives.models import Archive

@@ -20,7 +20,7 @@
                         <div class="message-preview">
                             {% with thread.messages.last as last_message %}
                                 {% if last_message %}
-                                    <strong>{{ last_message.sender.full_name|default:last_message.sender.get_display_name }}:</strong>
+                                    <strong>{{ last_message.sender.get_display_name }}:</strong>
                                     {{ last_message.content|truncatewords:15 }}
                                 {% endif %}
                             {% endwith %}
@@ -28,7 +28,7 @@
                         <div class="message-participants">
                             {% for participant in thread.participants.all %}
                                 {% if participant != user %}
-                                    <span class="participant">{{ participant.full_name|default:participant.get_display_name }}</span>
+                                    <span class="participant">{{ participant.get_display_name }}</span>
                                 {% endif %}
                             {% endfor %}
                         </div>

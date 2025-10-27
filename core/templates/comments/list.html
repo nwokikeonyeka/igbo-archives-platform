@@ -7,7 +7,7 @@
             <div class="comment-box {% if comment.parent %}comment-reply{% endif %}" id="comment-{{ comment.id }}" style="margin-left: {% if comment.parent %}30px{% else %}0{% endif %}">
                 <div class="comment-header">
                     {% if comment.user %}
-                        <a href="/profile/{{ comment.user.username }}/" class="comment-author">{{ comment.user.full_name|default:comment.user.get_display_name }}</a>
+                        <a href="{% url 'users:profile' comment.user.username %}" class="comment-author text-decoration-none">{{ comment.user.get_display_name }}</a>
                     {% else %}
                         <span class="comment-author">{{ comment.name }}</span>
                     {% endif %}

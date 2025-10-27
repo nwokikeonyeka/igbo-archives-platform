@@ -78,7 +78,12 @@
                         {% if archive.date_created %}
                         <p><strong>Date Created:</strong> {{ archive.date_created|date:"F d, Y" }}</p>
                         {% endif %}
-                        <p><strong>Uploaded by:</strong> {{ archive.uploaded_by.get_full_name|default:archive.uploaded_by.username }}</p>
+                        <p>
+                            <strong>Uploaded by:</strong> 
+                            <a href="{% url 'users:profile' archive.uploaded_by.username %}" class="text-decoration-none">
+                                {{ archive.uploaded_by.get_display_name }}
+                            </a>
+                        </p>
                     </div>
                 </div>
             </div>

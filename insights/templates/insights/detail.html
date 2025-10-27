@@ -12,7 +12,7 @@
                 
                 <div class="insight-meta mb-3">
                     <small class="text-muted">
-                        By <a href="{% url 'users:profile' insight.author.username %}">{{ insight.author.get_full_name|default:insight.author.username }}</a>
+                        By <a href="{% url 'users:profile' insight.author.username %}" class="text-decoration-none">{{ insight.author.get_display_name }}</a>
                         on {{ insight.created_at|date:"F d, Y" }}
                         {% if insight.updated_at != insight.created_at %}
                         (Updated {{ insight.updated_at|date:"F d, Y" }})
@@ -78,8 +78,8 @@
                     <div class="card-body">
                         <h5 class="card-title">About the Author</h5>
                         <p>
-                            <a href="{% url 'users:profile' insight.author.username %}">
-                                {{ insight.author.get_full_name|default:insight.author.username }}
+                            <a href="{% url 'users:profile' insight.author.username %}" class="text-decoration-none">
+                                {{ insight.author.get_display_name }}
                             </a>
                         </p>
                         {% if insight.author.bio %}

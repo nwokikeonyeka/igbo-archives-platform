@@ -108,10 +108,7 @@
                             <a href="/profile/{{ user.username }}/edit/" class="profile-dropdown-item">
                                 <i class="fas fa-edit"></i> Edit Profile
                             </a>
-                            <a href="/profile/delete-account/" class="profile-dropdown-item">
-                                <i class="fas fa-trash-alt"></i> Delete Account
-                            </a>
-                            <a href="/accounts/logout/" class="profile-dropdown-item">
+                            <a href="{% url 'account_logout' %}" class="profile-dropdown-item" id="logoutLink">
                                 <i class="fas fa-sign-out-alt"></i> Logout
                             </a>
                         </div>
@@ -262,6 +259,58 @@
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <script src="{% static 'js/main.js' %}"></script>
     <script src="{% static 'js/push-notifications.js' %}"></script>
+    
+    <script>
+    // Instant logout without confirmation
+    document.addEventListener('DOMContentLoaded', function() {
+        const logoutLink = document.getElementById('logoutLink');
+        if (logoutLink) {
+            logoutLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Create and submit logout form
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{% url "account_logout" %}';
+                
+                const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+                if (csrfToken) {
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = 'csrfmiddlewaretoken';
+                    csrfInput.value = csrfToken.value;
+                    form.appendChild(csrfInput);
+                } else {
+                    // Get CSRF token from cookie if not in page
+                    const csrfInput = document.createElement('input');
+                    csrfInput.type = 'hidden';
+                    csrfInput.name = 'csrfmiddlewaretoken';
+                    csrfInput.value = getCookie('csrftoken');
+                    form.appendChild(csrfInput);
+                }
+                
+                document.body.appendChild(form);
+                form.submit();
+            });
+        }
+    });
+    
+    // Helper function to get CSRF token from cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    </script>
     
     <script>
     // Dark Mode Toggle
