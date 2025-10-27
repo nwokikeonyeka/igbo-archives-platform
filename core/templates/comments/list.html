@@ -1,0 +1,109 @@
+{% load threadedcomments_tags %}
+{% load i18n %}
+
+<div class="comments-list">
+    {% if comment_list %}
+        {% for comment in comment_list %}
+            <div class="comment-box {% if comment.parent %}comment-reply{% endif %}" id="comment-{{ comment.id }}" style="margin-left: {% if comment.parent %}30px{% else %}0{% endif %}">
+                <div class="comment-header">
+                    {% if comment.user %}
+                        <a href="/profile/{{ comment.user.username }}/" class="comment-author">{{ comment.user.full_name|default:comment.user.get_display_name }}</a>
+                    {% else %}
+                        <span class="comment-author">{{ comment.name }}</span>
+                    {% endif %}
+                    <span class="comment-time">{{ comment.submit_date|timesince }} ago</span>
+                </div>
+                <div class="comment-content">
+                    {{ comment.comment|linebreaks }}
+                </div>
+                <div class="comment-actions">
+                    <button class="comment-reply-btn" data-comment-id="{{ comment.id }}">
+                        <i class="fas fa-reply"></i> Reply
+                    </button>
+                    {% if user.is_authenticated and comment.user == user %}
+                        <a href="{% url 'comments-delete' comment.id %}" class="comment-delete-btn">
+                            <i class="fas fa-trash"></i> Delete
+                        </a>
+                    {% endif %}
+                </div>
+                
+                <!-- Nested replies render recursively here via threadedcomments -->
+                {% if comment.children %}
+                    {% for child in comment.children %}
+                        {% include 'comments/list.html' with comment_list=child.get_descendants %}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="no-comments">No comments yet. Be the first to share your thoughts!</p>
+    {% endif %}
+</div>
+
+<style>
+.comment-box {
+    background: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+}
+
+.comment-box.comment-reply {
+    border-left: 3px solid var(--primary-color);
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.comment-author:hover {
+    text-decoration: underline;
+}
+
+.comment-time {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.comment-content {
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+.comment-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.comment-reply-btn, .comment-delete-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: none;
+}
+
+.comment-reply-btn:hover, .comment-delete-btn:hover {
+    color: var(--primary-color);
+}
+
+.no-comments {
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    padding: 30px;
+}
+</style>

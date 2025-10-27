@@ -3,18 +3,108 @@
 {% block title %}Messages{% endblock %}
 
 {% block content %}
-<h2>Messages</h2>
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="mb-4">Messages</h2>
 
-<div class="list-group">
-    {% for thread in threads %}
-    <a href="{% url 'users:thread' thread.id %}" class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-            <h5 class="mb-1">{{ thread.subject }}</h5>
-            <small>{{ thread.updated_at|date:"M d, Y" }}</small>
+            <!-- Messages list in boxes -->
+            <div class="messages-inbox">
+                {% for thread in threads %}
+                <a href="{% url 'users:thread' thread.id %}" class="message-box">
+                    <div class="message-box-content">
+                        <div class="message-box-header">
+                            <h5 class="message-title">{{ thread.subject }}</h5>
+                            <span class="message-time">{{ thread.updated_at|date:"n/j/Y g:i A" }}</span>
+                        </div>
+                        <div class="message-preview">
+                            {% with thread.messages.last as last_message %}
+                                {% if last_message %}
+                                    <strong>{{ last_message.sender.full_name|default:last_message.sender.get_display_name }}:</strong>
+                                    {{ last_message.content|truncatewords:15 }}
+                                {% endif %}
+                            {% endwith %}
+                        </div>
+                        <div class="message-participants">
+                            {% for participant in thread.participants.all %}
+                                {% if participant != user %}
+                                    <span class="participant">{{ participant.full_name|default:participant.get_display_name }}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </a>
+                {% empty %}
+                <div class="no-messages">
+                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                    <p>No messages yet.</p>
+                </div>
+                {% endfor %}
+            </div>
         </div>
-    </a>
-    {% empty %}
-    <p>No messages yet.</p>
-    {% endfor %}
+    </div>
 </div>
+
+<style>
+.messages-inbox {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.message-box {
+    background: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.2s;
+}
+
+.message-box:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border-color: var(--primary-color);
+}
+
+.message-box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.message-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+}
+
+.message-time {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.message-preview {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+}
+
+.message-participants {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.participant {
+    font-weight: 500;
+}
+
+.no-messages {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-secondary);
+}
+</style>
 {% endblock %}

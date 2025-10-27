@@ -42,7 +42,47 @@ def archive_list(request):
 
 def archive_detail(request, pk):
     archive = get_object_or_404(Archive, pk=pk, is_approved=True)
-    return render(request, 'archives/detail.html', {'archive': archive})
+    
+    # Get previous and next archives
+    previous_archive = Archive.objects.filter(
+        is_approved=True,
+        created_at__lt=archive.created_at
+    ).order_by('-created_at').first()
+    
+    next_archive = Archive.objects.filter(
+        is_approved=True,
+        created_at__gt=archive.created_at
+    ).order_by('created_at').first()
+    
+    # Get recommended archives (9 total: same category, same tags, or featured)
+    recommended = Archive.objects.filter(is_approved=True).exclude(pk=archive.pk)
+    
+    if archive.category:
+        recommended = recommended.filter(category=archive.category)
+    
+    # If we need more, add by tags
+    if recommended.count() < 9:
+        tag_names = archive.tags.values_list('name', flat=True)
+        if tag_names:
+            recommended = Archive.objects.filter(
+                is_approved=True,
+                tags__name__in=tag_names
+            ).exclude(pk=archive.pk).distinct()
+    
+    # If still need more, add featured
+    if recommended.count() < 9:
+        recommended = Archive.objects.filter(is_approved=True).exclude(pk=archive.pk).order_by('-is_featured', '-created_at')
+    
+    recommended = recommended[:9]
+    
+    context = {
+        'archive': archive,
+        'previous_archive': previous_archive,
+        'next_archive': next_archive,
+        'recommended': recommended,
+    }
+    
+    return render(request, 'archives/detail.html', context)
 
 @login_required
 def archive_create(request):

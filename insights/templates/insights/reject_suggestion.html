@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Reject Edit Suggestion{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Reject Edit Suggestion</h2>
+
+    <div class="alert alert-info">
+        <strong>Suggestion from:</strong> {{ suggestion.suggested_by.full_name }}<br>
+        <strong>On post:</strong> {{ suggestion.post.title }}<br>
+        <strong>Suggestion:</strong> {{ suggestion.suggestion_text }}
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="rejection_reason" class="form-label">Reason for Rejection (Optional)</label>
+            <textarea name="rejection_reason" id="rejection_reason" class="form-control" rows="3"
+                      placeholder="Optionally explain why you're declining this suggestion..."></textarea>
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-danger">
+                <i class="fas fa-times"></i> Confirm Rejection
+            </button>
+            <a href="{% url 'users:dashboard' %}" class="btn btn-outline-secondary">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

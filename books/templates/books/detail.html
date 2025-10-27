@@ -65,6 +65,14 @@
 
                 <hr>
 
+                <!-- Previous/Next Navigation -->
+                {% include 'partials/prev_next_navigation.html' with previous=previous_review next=next_review %}
+
+                <!-- Recommended Book Reviews -->
+                {% include 'partials/recommended_carousel.html' with recommended=recommended %}
+
+                <hr>
+
                 <!-- Comments Section -->
                 <div class="comments-section mt-5">
                     <h3>Discussion</h3>

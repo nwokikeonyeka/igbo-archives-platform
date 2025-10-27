@@ -45,7 +45,55 @@ def book_list(request):
 
 def book_detail(request, slug):
     review = get_object_or_404(BookReview, slug=slug, is_published=True, is_approved=True)
-    return render(request, 'books/detail.html', {'review': review})
+    
+    # Get previous and next reviews
+    previous_review = BookReview.objects.filter(
+        is_published=True,
+        is_approved=True,
+        created_at__lt=review.created_at
+    ).order_by('-created_at').first()
+    
+    next_review = BookReview.objects.filter(
+        is_published=True,
+        is_approved=True,
+        created_at__gt=review.created_at
+    ).order_by('created_at').first()
+    
+    # Get recommended reviews (9 total: same tags, same rating, or recent)
+    recommended = BookReview.objects.filter(
+        is_published=True,
+        is_approved=True
+    ).exclude(slug=review.slug)
+    
+    tag_names = review.tags.values_list('name', flat=True)
+    if tag_names:
+        recommended = recommended.filter(tags__name__in=tag_names).distinct()
+    
+    # If we need more, add by rating
+    if recommended.count() < 9:
+        recommended = BookReview.objects.filter(
+            is_published=True,
+            is_approved=True,
+            rating=review.rating
+        ).exclude(slug=review.slug)
+    
+    # If still need more, add recent
+    if recommended.count() < 9:
+        recommended = BookReview.objects.filter(
+            is_published=True,
+            is_approved=True
+        ).exclude(slug=review.slug).order_by('-created_at')
+    
+    recommended = recommended[:9]
+    
+    context = {
+        'review': review,
+        'previous_review': previous_review,
+        'next_review': next_review,
+        'recommended': recommended,
+    }
+    
+    return render(request, 'books/detail.html', context)
 
 @login_required
 def book_create(request):

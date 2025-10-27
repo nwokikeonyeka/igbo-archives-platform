@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}Moderation Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Moderation Dashboard</h2>
+    <p class="text-muted">Review and approve pending posts</p>
+
+    <hr>
+
+    <!-- Pending Insights -->
+    <div class="moderation-section mb-5">
+        <h3><i class="fas fa-lightbulb"></i> Pending Insights ({{ pending_insights.count }})</h3>
+        
+        {% if pending_insights %}
+        <div class="pending-posts">
+            {% for post in pending_insights %}
+            <div class="pending-post-card">
+                <div class="post-header">
+                    <h4>{{ post.title }}</h4>
+                    <span class="post-meta">By {{ post.author.full_name|default:post.author.get_display_name }} | {{ post.submitted_at|date:"M d, Y g:i A" }}</span>
+                </div>
+                <div class="post-excerpt">
+                    {{ post.excerpt|default:"No excerpt available"|truncatewords:30 }}
+                </div>
+                <div class="post-actions">
+                    <a href="/insights/{{ post.slug }}/" class="btn btn-outline-primary btn-sm" target="_blank">
+                        <i class="fas fa-eye"></i> Preview
+                    </a>
+                    <a href="{% url 'users:approve_insight' post.pk %}" class="btn btn-success btn-sm">
+                        <i class="fas fa-check"></i> Approve
+                    </a>
+                    <a href="{% url 'users:reject_insight' post.pk %}" class="btn btn-danger btn-sm">
+                        <i class="fas fa-times"></i> Reject
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted">No pending insights</p>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <!-- Pending Book Reviews -->
+    <div class="moderation-section mb-5">
+        <h3><i class="fas fa-book"></i> Pending Book Reviews ({{ pending_books.count }})</h3>
+        
+        {% if pending_books %}
+        <div class="pending-posts">
+            {% for review in pending_books %}
+            <div class="pending-post-card">
+                <div class="post-header">
+                    <h4>{{ review.review_title }}</h4>
+                    <span class="post-meta">Book: {{ review.book_title }} | By {{ review.reviewer.full_name|default:review.reviewer.get_display_name }} | {{ review.submitted_at|date:"M d, Y g:i A" }}</span>
+                </div>
+                <div class="post-excerpt">
+                    Rating: 
+                    {% for i in "12345" %}
+                        {% if forloop.counter <= review.rating %}
+                            <i class="fas fa-star text-warning"></i>
+                        {% else %}
+                            <i class="far fa-star text-warning"></i>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="post-actions">
+                    <a href="/books/{{ review.slug }}/" class="btn btn-outline-primary btn-sm" target="_blank">
+                        <i class="fas fa-eye"></i> Preview
+                    </a>
+                    <a href="{% url 'users:approve_book_review' review.pk %}" class="btn btn-success btn-sm">
+                        <i class="fas fa-check"></i> Approve
+                    </a>
+                    <a href="{% url 'users:reject_book_review' review.pk %}" class="btn btn-danger btn-sm">
+                        <i class="fas fa-times"></i> Reject
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-muted">No pending book reviews</p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.moderation-section h3 {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+.pending-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.pending-post-card {
+    background: var(--background-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.post-header h4 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.post-meta {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+}
+
+.post-excerpt {
+    margin: 15px 0;
+    color: var(--text-secondary);
+}
+
+.post-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+</style>
+{% endblock %}

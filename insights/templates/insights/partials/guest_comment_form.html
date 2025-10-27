@@ -1,5 +1,5 @@
 {% load comments %}
-{# TODO: Phase 4 - Implement reCAPTCHA properly with django-recaptcha #}
+{% load recaptcha %}
 
 {% get_comment_form for object as form %}
 
@@ -30,7 +30,9 @@
             <textarea class="form-control" id="id_comment" name="comment" rows="4" required></textarea>
         </div>
 
-        {# reCAPTCHA will be properly implemented in Phase 4 #}
+        <div class="mb-3">
+            {{ form.recaptcha_field }}
+        </div>
 
         <button type="submit" class="btn btn-primary">Post Comment</button>
     </form>

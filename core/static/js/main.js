@@ -190,4 +190,63 @@ document.addEventListener('DOMContentLoaded', function() {
         
         lastScrollTop = scrollTop;
     }, { passive: true });
+    
+    // Notification Bell Dropdown
+    const notificationBell = document.getElementById('notificationBell');
+    const notificationDropdown = document.getElementById('notificationDropdown');
+    const profileButton = document.getElementById('profileButton');
+    const profileDropdown = document.getElementById('profileDropdown');
+    
+    if (notificationBell && notificationDropdown) {
+        notificationBell.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            
+            // Close profile dropdown if open
+            if (profileDropdown) {
+                profileDropdown.classList.remove('show');
+            }
+            
+            // Toggle notification dropdown
+            const isVisible = notificationDropdown.style.display === 'block';
+            
+            if (!isVisible) {
+                // Load notifications via AJAX
+                try {
+                    const response = await fetch('/profile/notifications/dropdown/');
+                    const html = await response.text();
+                    notificationDropdown.innerHTML = html;
+                    notificationDropdown.style.display = 'block';
+                } catch (error) {
+                    console.error('Error loading notifications:', error);
+                    notificationDropdown.innerHTML = '<div class="notification-loading">Error loading notifications</div>';
+                    notificationDropdown.style.display = 'block';
+                }
+            } else {
+                notificationDropdown.style.display = 'none';
+            }
+        });
+    }
+    
+    if (profileButton && profileDropdown) {
+        profileButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Close notification dropdown if open
+            if (notificationDropdown) {
+                notificationDropdown.style.display = 'none';
+            }
+            
+            profileDropdown.classList.toggle('show');
+        });
+    }
+    
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', () => {
+        if (profileDropdown) {
+            profileDropdown.classList.remove('show');
+        }
+        if (notificationDropdown) {
+            notificationDropdown.style.display = 'none';
+        }
+    });
 });
