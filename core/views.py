@@ -7,9 +7,10 @@ from archives.models import Archive
 
 
 def home(request):
-    featured_archives = Archive.objects.filter(is_featured=True)[:5]
+    # Get all approved archives and randomize (no featured filtering)
+    all_archives = Archive.objects.filter(is_approved=True).order_by('?')[:10]
     context = {
-        'featured_archives': featured_archives
+        'featured_archives': all_archives
     }
     return render(request, 'core/home.html', context)
 

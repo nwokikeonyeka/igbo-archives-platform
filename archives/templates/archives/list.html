@@ -41,7 +41,8 @@
                     hx-push-url="true">
                 <option value="-created_at" {% if request.GET.sort == '-created_at' or not request.GET.sort %}selected{% endif %}>Newest First</option>
                 <option value="created_at" {% if request.GET.sort == 'created_at' %}selected{% endif %}>Oldest First</option>
-                <option value="-is_featured" {% if request.GET.sort == '-is_featured' %}selected{% endif %}>Featured</option>
+                <option value="title" {% if request.GET.sort == 'title' %}selected{% endif %}>A-Z</option>
+                <option value="-title" {% if request.GET.sort == '-title' %}selected{% endif %}>Z-A</option>
             </select>
         </div>
         
